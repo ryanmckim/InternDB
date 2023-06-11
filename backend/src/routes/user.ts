@@ -1,10 +1,10 @@
 // POST request for account creation
-router.route("/users").post(protect, createUser);
+router.route("/user").post(protect, createUser);
 
 // GET request for profile page
-router.route("/users/:id").get(protect, displayUser);
+router.route("/user/:id").get(protect, displayUser);
 
 // PUT request for changing passsword
-router.route("/users/:id/password").put(protect, newPassword);
+router.route("/user/:id").put(protect, newPassword);
 
 module.exports = router;
