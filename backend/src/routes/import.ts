@@ -7,7 +7,6 @@ const {
   createReview,
   displayReview,
   displayUserReview,
-  changeReview,
   deleteReview,
   editReview,
   displayCompanies,
