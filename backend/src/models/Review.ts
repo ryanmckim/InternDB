@@ -35,6 +35,9 @@ export class Review {
   workType: String;
 
   @Column()
+  workOption: String;
+
+  @Column()
   benefits: String;
 
   @Column()
