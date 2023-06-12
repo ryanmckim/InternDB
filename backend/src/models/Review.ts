@@ -7,8 +7,11 @@ export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  posterID: number;
+  @ManyToOne(() => User, (u) => u.id)
+  userID: number;
+
+  @ManyToOne(() => Company, (c) => c.id)
+  companyID: number;
 
   @Column()
   company: String;
@@ -20,10 +23,10 @@ export class Review {
   location: String;
 
   @Column()
-  salaryCAD: number;
+  salary: number;
 
   @Column()
-  salaryUSD: number;
+  currency: String;
 
   @Column()
   positionStartDate: Date;
@@ -42,10 +45,4 @@ export class Review {
 
   @Column()
   comments: String;
-
-  @ManyToOne(() => Company, (c) => c.id)
-  c: Company;
-
-  @ManyToOne(() => User, (u) => u.id)
-  u: User;
 }

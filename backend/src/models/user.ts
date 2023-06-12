@@ -15,6 +15,6 @@ export class User {
   @Column("text", { array: true })
   reviews: Array<Review>;
 
-  @OneToMany(() => Review, (r) => r.posterID)
+  @OneToMany(() => Review, (r) => r.userID)
   r: Review;
 }
