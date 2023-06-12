@@ -10,7 +10,7 @@ export class Review {
   @ManyToOne(() => User, (u) => u.id)
   userID: number;
 
-  @Column()
+  @ManyToOne(() => Company, (c) => c.name)
   company: String;
 
   @Column()
