@@ -17,6 +17,6 @@ export class Company {
   @Column()
   numReviews: number;
 
-  @OneToMany(() => Review, (reviews) => reviews.id)
+  @OneToMany(() => Review, (r) => r.company)
   reviews: Array<Review>;
 }

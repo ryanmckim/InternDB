@@ -12,9 +12,6 @@ export class User {
   @Column()
   password: String;
 
-  @Column("text", { array: true })
-  reviews: Array<Review>;
-
   @OneToMany(() => Review, (r) => r.userID)
-  r: Review;
+  reviews: Array<Review>;
 }
