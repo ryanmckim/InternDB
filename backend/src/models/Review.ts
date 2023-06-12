@@ -10,9 +10,6 @@ export class Review {
   @ManyToOne(() => User, (u) => u.id)
   userID: number;
 
-  @ManyToOne(() => Company, (c) => c.name)
-  companyID: number;
-
   @Column()
   company: String;
 
