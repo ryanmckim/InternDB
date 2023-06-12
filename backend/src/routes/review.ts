@@ -1,3 +1,6 @@
+// GET request for reviews on a company page
+router.route("/company/review").get(displayReview);
+
 // POST request for review creation
 router.route("/review").post(createReview);
 
