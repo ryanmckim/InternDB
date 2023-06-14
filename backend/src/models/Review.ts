@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Company } from "./company";
-import { User } from "./user";
+import { Company } from "./Company";
+import { User } from "./User";
 
 @Entity("reviews")
 export class Review {
