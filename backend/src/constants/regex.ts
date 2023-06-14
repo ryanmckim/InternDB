@@ -13,7 +13,7 @@ const emailRegEx: String[] = [
   At least 8 characters
 */
 const pwdRegEx: String[] = [
-  "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*d)(?=.*[#$^+=!*()@%&]).{8,}$",
+  "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[#$^+=!*()@%&]).{8,}$",
 ];
 
 const emailRe = new RegExp(emailRegEx.join("|"));
