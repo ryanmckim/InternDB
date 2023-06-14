@@ -12,4 +12,7 @@ AppDataSource.initialize()
 app.use(express.json());
 app.use(cors());
 
+app.use("/api/v1/user", require("./routes/user"));
+app.use("/api/v1/auth", require("./routes/auth"));
+
 app.listen(port, () => console.log(`Server running on Port ${port}`));
