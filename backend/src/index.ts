@@ -12,4 +12,8 @@ AppDataSource.initialize()
 app.use(express.json());
 app.use(cors());
 
+app.use("/api/v1/company", require("./routes/company"));
+app.use("/api/v1/review", require("./routes/review"));
+app.use("/api/v1/user", require("./routes/user"));
+
 app.listen(port, () => console.log(`Server running on Port ${port}`));
