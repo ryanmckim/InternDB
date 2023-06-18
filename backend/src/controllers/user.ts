@@ -2,25 +2,23 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../database";
 import { User } from "../models/User";
 import { Equal } from "typeorm";
-import { Review } from "../models/Review";
 
-const userRepository = AppDataSource.getRepository(User);
-
-export const createUser = async (req: Request, res: Response) => {
-  try {
-    const review = userRepository.create({
-      ...req.body,
-    });
-    await userRepository.save(review);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create review" });
-  }
-};
+export const userRepository = AppDataSource.getRepository(User);
+const userErrors = require("../errors/userErrors");
 
 export const displayUser = async (req: Request, res: Response) => {
+  const userID = parseInt(req.params.userID);
   try {
+    for (const error in userErrors) {
+      if (userErrors[error](userID)) {
+        switch (error) {
+          case "InvaildUserID":
+            return res.status(404).json({ error: "User not found" });
+        }
+      }
+    }
     const user = await userRepository.find({
-      where: { id: Equal(parseInt(req.params.userID)) },
+      where: { id: Equal(userID) },
     });
     res.json(user);
   } catch (error) {
@@ -29,22 +27,20 @@ export const displayUser = async (req: Request, res: Response) => {
 };
 
 export const newPassword = async (req: Request, res: Response) => {
+  const userID = parseInt(req.params.userID);
   try {
-    if (!req.params.userID) {
-      return res.status(404).json({ error: "Invalid user ID" });
+    for (const error in userErrors) {
+      if (userErrors[error](userID)) {
+        switch (error) {
+          case "InvaildUserID":
+            return res.status(404).json({ error: "User not found" });
+        }
+      }
     }
     const user = await userRepository.findOneBy({
-      id: parseInt(req.params.userID),
+      id: userID,
     });
-    if (!user) {
-      return res.status(400).json({ error: "User not found" });
-    }
-    if (user.password === req.params.password) {
-      return res.status(400).json({
-        error: "New password must be different from the current password",
-      });
-    }
-    user.password = req.params.password;
+    user.password = req.body.password;
     await userRepository.save(user);
     res.json(user);
   } catch {
@@ -52,22 +48,23 @@ export const newPassword = async (req: Request, res: Response) => {
   }
 };
 
-export const displayUserReview = async (req: Request, res: Response) => {
+export const deleteUser = async (req: Request, res: Response) => {
+  const userID = parseInt(req.params.userID);
   try {
-    if (!req.params.userID) {
-      return res.status(404).json({ error: "Invalid user ID" });
+    for (const error in userErrors) {
+      if (userErrors[error](userID)) {
+        switch (error) {
+          case "InvaildUserID":
+            return res.status(404).json({ error: "User not found" });
+        }
+      }
     }
-    const user = await userRepository.findOneBy({
-      id: parseInt(req.params.userID),
+    const user = await userRepository.find({
+      where: { id: Equal(userID) },
     });
-    if (!user) {
-      return res.status(400).json({ error: "User not found" });
-    }
-    if (!user.reviews) {
-      res.status(500).json({ message: "No reviews yet" });
-    }
-    res.json(user.reviews);
+    await userRepository.remove(user);
+    res.send("User deleted successfully");
   } catch (error) {
-    res.status(500).json({ error: "Failed to display reviews" });
+    res.status(500).json({ error: "Failed to delete account" });
   }
 };

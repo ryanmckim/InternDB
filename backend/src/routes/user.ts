@@ -1,23 +1,15 @@
-import {
-  createUser,
-  displayUser,
-  newPassword,
-  displayUserReview,
-} from "../controllers/user";
+import { displayUser, newPassword, deleteUser } from "../controllers/user";
 import { Router } from "express";
 
 const router = Router();
 
-// POST request for account creation
-router.route("/").post(createUser);
-
 // GET request for profile page
-router.route("/:userID").get(protect, displayUser);
+router.route("/:userID").get(displayUser);
 
 // PUT request for changing password
-router.route("/:userID/password").put(protect, newPassword);
+router.route("/:userID/password").put(newPassword);
 
-// GET request for reviews on profile page
-router.route("/:userID").get(protect, displayUserReview);
+// DELETE request for account deletion
+router.route("/:userID").delete(deleteUser);
 
 module.exports = router;
