@@ -1,13 +1,9 @@
-import { Equal } from "typeorm";
-import { companyRepository } from "../controllers/company";
+import { Company } from "../models/Company";
 
 module.exports = {
-  InvalidCompanyID: (companyID: number) => !isValidCompanyID(companyID),
+  InvalidCompany: (company: Company) => !isValidCompany(company),
 };
 
-const isValidCompanyID = async (companyID: number) => {
-  const review = await companyRepository.find({
-    where: { id: Equal(companyID) },
-  });
-  return !!review;
+const isValidCompany = async (company: Company) => {
+  return !company;
 };

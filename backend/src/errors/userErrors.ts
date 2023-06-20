@@ -1,13 +1,9 @@
-import { Equal } from "typeorm";
-import { userRepository } from "../controllers/user";
+import { User } from "../models/User";
 
 module.exports = {
-  InvalidUserID: (userID: number) => !isValidUserID(userID),
+  InvalidUser: (user: User) => !isValidUser(user),
 };
 
-const isValidUserID = async (userID: number) => {
-  const user = await userRepository.find({
-    where: { id: Equal(userID) },
-  });
-  return !!user;
+const isValidUser = async (user: User) => {
+  return !user;
 };

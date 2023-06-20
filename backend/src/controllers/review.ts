@@ -52,6 +52,10 @@ export const editReview = async (req: Request, res: Response) => {
     const review = await reviewRepository.findOneBy({
       id: reviewID,
     });
+    // here
+    if (!review) {
+      return res.status(404).json({ error: "User not found" });
+    }
     Object.assign(review, updatedReview);
     await reviewRepository.save(review);
     res.json(review);
