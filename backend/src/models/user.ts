@@ -1,8 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+} from "typeorm";
 import { Matches } from "class-validator";
 import { Review } from "./Review";
 import { emailRe, pwdRe } from "../constants/regex";
 import { Role } from "../types/roles";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
@@ -10,15 +18,46 @@ export class User {
 
   @Column()
   @Matches(emailRe)
-  email: String;
+  email: string;
 
   @Column()
   @Matches(pwdRe)
-  password: String;
+  password: string;
 
-  @Column()
+  @Column({
+    type: "enum",
+    enum: ["admin", "user"],
+    default: "user",
+  })
   role: Role;
+
+  @Column("boolean", { default: false })
+  verified: boolean = false;
 
   @OneToMany(() => Review, (r) => r.userID)
   reviews: Array<Review>;
+
+  @CreateDateColumn()
+  createdOn: Date;
+
+  hashPassword() {
+    this.password = bcrypt.hashSync(this.password, 8);
+  }
+
+  matchPassword(password: string) {
+    return bcrypt.compareSync(password, this.password);
+  }
+
+  getSignedToken() {
+    return jwt.sign({ id: this.id }, process.env.JWT_SECRET!, {
+      expiresIn: process.env.JWT_EXPIRE,
+    });
+  }
+
+  getVerificationToken() {
+    return jwt.sign(
+      { id: this.id, email: this.email },
+      process.env.JWT_SECRET!
+    );
+  }
 }
