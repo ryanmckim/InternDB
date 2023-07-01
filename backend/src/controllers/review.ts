@@ -52,12 +52,8 @@ export const editReview = async (req: Request, res: Response) => {
     const review = await reviewRepository.findOneBy({
       id: reviewID,
     });
-    // here
-    if (!review) {
-      return res.status(404).json({ error: "User not found" });
-    }
     Object.assign(review, updatedReview);
-    await reviewRepository.save(review);
+    await reviewRepository.save(review!);
     res.json(review);
   } catch {
     res.status(500).json({ error: "Failed to update review" });
@@ -84,7 +80,7 @@ export const deleteReview = async (req: Request, res: Response) => {
     const review = await reviewRepository.findOneBy({
       id: reviewID,
     });
-    const deleteResult = await reviewRepository.delete(reviewID);
+    await reviewRepository.remove(review!);
   } catch {
     res.status(500).json({ error: "Failed to delete review" });
   }

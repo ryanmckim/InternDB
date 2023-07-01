@@ -4,6 +4,6 @@ module.exports = {
   InvalidUser: (user: User) => !isValidUser(user),
 };
 
-const isValidUser = async (user: User) => {
+const isValidUser = (user: User) => {
   return !user;
 };

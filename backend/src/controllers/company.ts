@@ -18,8 +18,8 @@ export const displayCompanies = async (req: Request, res: Response) => {
 export const displayCompanyInfo = async (req: Request, res: Response) => {
   try {
     const companyID = parseInt(req.params.companyID);
-    const company = await companyRepository.find({
-      where: { id: Equal(companyID) },
+    const company = await companyRepository.findOneBy({
+      id: Equal(companyID),
     });
     for (const error in companyErrors) {
       if (companyErrors[error](company)) {

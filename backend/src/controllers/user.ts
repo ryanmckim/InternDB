@@ -9,8 +9,8 @@ const userErrors = require("../errors/userErrors");
 export const displayUser = async (req: Request, res: Response) => {
   try {
     const userID = parseInt(req.params.userID);
-    const user = await userRepository.find({
-      where: { id: Equal(userID) },
+    const user = await userRepository.findOneBy({
+      id: Equal(userID),
     });
     for (const error in userErrors) {
       if (userErrors[error](user)) {
@@ -40,8 +40,8 @@ export const newPassword = async (req: Request, res: Response) => {
         }
       }
     }
-    user.password = req.body.password;
-    await userRepository.save(user);
+    user!.password = req.body.password;
+    await userRepository.save(user!);
     res.json(user);
   } catch {
     res.status(500).json({ error: "Failed to update password" });
@@ -51,8 +51,8 @@ export const newPassword = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const userID = parseInt(req.params.userID);
-    const user = await userRepository.find({
-      where: { id: Equal(userID) },
+    const user = await userRepository.findOneBy({
+      id: Equal(userID),
     });
     for (const error in userErrors) {
       if (userErrors[error](user)) {
@@ -62,7 +62,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         }
       }
     }
-    await userRepository.remove(user);
+    await userRepository.remove(user!);
     res.send("User deleted successfully");
   } catch (error) {
     res.status(500).json({ error: "Failed to delete account" });
