@@ -11,14 +11,9 @@ interface newJwtPayload extends JwtPayload {
   id: number;
 }
 
-interface customRequest extends Request {
-  user: User;
-  token: string | newJwtPayload;
-}
-
 // validate if you are a user
 export const protect = async (
-  req: customRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -32,7 +27,7 @@ export const protect = async (
   }
 
   if (!token) {
-    res.status(401).send({ message: "Not authorized" });
+    res.status(403).send({ message: "Not authorized" });
     return;
   }
 
@@ -46,12 +41,12 @@ export const protect = async (
     });
 
     if (!user) {
-      res.status(404).send({ message: "User not found" });
+      res.status(403).send({ message: "Not authorized" });
       return;
     }
 
-    req.user = user;
-    req.token = token;
+    req.body.user = user;
+    req.body.token = token;
 
     next();
   } catch (err) {
@@ -63,13 +58,13 @@ export const protect = async (
 
 // validate if you have the right authorization
 export const validateRole = async (
-  req: customRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
   role: Role
 ) => {
   try {
-    if (role !== req.user.role) {
+    if (role !== req.body.user.role) {
       res.status(401).send({ message: "Not authorized" });
       return;
     }

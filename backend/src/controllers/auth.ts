@@ -51,7 +51,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     const token = user.getVerificationToken();
 
-    const verifyUrl = `${process.env.FE_URL}/user/verify/${token}`;
+    const verifyUrl = `${process.env.BASE_URL}/api/v1/auth/verify/${token}`;
     const message = `
       <p>Please verify your email by clicking the below link:</p>
       <a href=${verifyUrl} clicktracking=off>${verifyUrl}</a>
@@ -80,7 +80,7 @@ export const verifyUser = async (req: Request, res: Response) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as newJwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as newJwtPayload;
 
     const user = await userRepository.findOne({
       where: {

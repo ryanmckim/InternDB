@@ -9,11 +9,11 @@ const emailRegEx: String[] = [
   At least 1 lowercase letter,
   At least 1 uppercase letter,
   At least 1 number,
-  At least 1 special character(#$^+=!*()@%&),
+  At least 1 special character(#?!@$%^&*-),
   At least 8 characters
 */
 const pwdRegEx: String[] = [
-  "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*d)(?=.*[#$^+=!*()@%&]).{8,}$",
+  "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$",
 ];
 
 const emailRe = new RegExp(emailRegEx.join("|"));

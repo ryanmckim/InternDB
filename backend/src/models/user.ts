@@ -4,6 +4,7 @@ import {
   Column,
   OneToMany,
   CreateDateColumn,
+  BeforeInsert,
 } from "typeorm";
 import { Matches } from "class-validator";
 import { Review } from "./Review";
@@ -40,6 +41,7 @@ export class User {
   @CreateDateColumn()
   createdOn: Date;
 
+  @BeforeInsert()
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 8);
   }
@@ -50,7 +52,7 @@ export class User {
 
   getSignedToken() {
     return jwt.sign({ id: this.id }, process.env.JWT_SECRET!, {
-      expiresIn: process.env.JWT_EXPIRE,
+      expiresIn: parseInt(process.env.JWT_EXPIRE!),
     });
   }
 
