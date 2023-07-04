@@ -130,6 +130,11 @@ export const loginUser = async (req: Request, res: Response) => {
       return;
     }
 
+    if (!user.verified) {
+      res.status(403).send({ message: "User not verified" });
+      return;
+    }
+
     if (!user.matchPassword(password)) {
       res.status(401).send({ message: "Password incorrect" });
       return;
