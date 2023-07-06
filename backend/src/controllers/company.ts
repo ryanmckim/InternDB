@@ -6,6 +6,19 @@ import { Equal } from "typeorm";
 export const companyRepository = AppDataSource.getRepository(Company);
 const companyErrors = require("../errors/companyErrors");
 
+// export const createCompany = async (req: Request, res: Response) => {
+//   try {
+//     const company = companyRepository.create({
+//       ...req.body,
+//       reviews: [],
+//     });
+//     await companyRepository.save(company);
+//     res.json(company);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to create company" });
+//   }
+// };
+
 export const displayCompanies = async (req: Request, res: Response) => {
   try {
     const companies = await companyRepository.find();

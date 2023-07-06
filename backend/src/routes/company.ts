@@ -3,6 +3,9 @@ import { Router } from "express";
 
 const router = Router();
 
+// // Test
+// router.route("/").post(createCompany);
+
 // GET request for companies on main page
 router.route("/").get(displayCompanies);
 
