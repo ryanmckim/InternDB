@@ -5,5 +5,5 @@ module.exports = {
 };
 
 const isValidCompany = async (company: Company) => {
-  return !company;
+  return !!company;
 };

@@ -12,6 +12,7 @@ export class User {
   @Column()
   password: String;
 
-  @OneToMany(() => Review, (r) => r.userID)
-  reviews: Array<Review>;
+  @Column({ type: "jsonb" })
+  @OneToMany(() => Review, (r) => r.userID, { cascade: true })
+  reviews: Review[];
 }

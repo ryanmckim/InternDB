@@ -5,5 +5,5 @@ module.exports = {
 };
 
 const isValidUser = (user: User) => {
-  return !user;
+  return !!user;
 };

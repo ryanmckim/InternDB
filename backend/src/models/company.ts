@@ -17,6 +17,7 @@ export class Company {
   @Column()
   numReviews: number;
 
-  @OneToMany(() => Review, (r) => r.company)
-  reviews: Array<Review>;
+  @Column({ type: "jsonb" })
+  @OneToMany(() => Review, (r) => r.companyID)
+  reviews: Review[];
 }

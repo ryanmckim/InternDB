@@ -1,28 +1,29 @@
-import { Equal } from "typeorm";
-import { reviewRepository } from "../controllers/review";
+import { Review } from "../models/Review";
+import { User } from "../models/User";
+import { Company } from "../models/Company";
 
 module.exports = {
-  InvalidReviewID: (reviewID: number) => !isValidReviewID(reviewID),
-  InvalidUserID: (userID: number) => !isValidUserID(userID),
-  InvalidCompanyName: (companyName: string) => !isValidCompanyName(companyName),
+  InvalidUser: (user: User) => !isValidUser(user),
 };
 
-const isValidReviewID = async (reviewID: number) => {
-  const review = await reviewRepository.find({
-    where: { id: Equal(reviewID) },
-  });
+const isValidUser = (user: User) => {
+  return !!user;
+};
+
+module.exports = {
+  InvalidReviewID: (review: Review) => !isValidReviewID(review),
+  InvalidUserID: (user: User) => !isValidUserID(user),
+  InvalidCompanyName: (company: Company) => !isValidCompanyName(company),
+};
+
+const isValidReviewID = (review: Review) => {
   return !!review;
 };
 
-const isValidUserID = async (userID: number) => {
-  const review = await reviewRepository.find({
-    where: { userID: Equal(userID) },
-  });
-  return !!review;
+const isValidUserID = (user: User) => {
+  return !!user;
 };
 
-const isValidCompanyName = async (companyName: string) => {
-  const company = await reviewRepository.find({
-    where: { company: Equal(companyName) },
-  });
+const isValidCompanyName = (company: Company) => {
+  return !!company;
 };

@@ -7,11 +7,11 @@ export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (u) => u.id)
+  @ManyToOne(() => User, (u) => u.id, { onDelete: "CASCADE" })
   userID: number;
 
-  @ManyToOne(() => Company, (c) => c.name)
-  company: String;
+  @ManyToOne(() => Company, (c) => c.id, { onDelete: "CASCADE" })
+  companyID: number;
 
   @Column()
   positionTitle: String;
