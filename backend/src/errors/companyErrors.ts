@@ -4,6 +4,6 @@ module.exports = {
   InvalidCompany: (company: Company) => !isValidCompany(company),
 };
 
-const isValidCompany = async (company: Company) => {
+const isValidCompany = (company: Company) => {
   return !!company;
 };

@@ -37,7 +37,7 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
     for (const error in companyErrors) {
       if (companyErrors[error](company)) {
         switch (error) {
-          case "isValidCompany":
+          case "InvalidCompany":
             return res.status(404).json({ error: "Company not found" });
         }
       }
