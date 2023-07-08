@@ -2,22 +2,23 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../database";
 import { User } from "../models/User";
 import { Equal } from "typeorm";
+import { error } from "console";
 
 const userRepository = AppDataSource.getRepository(User);
 const userErrors = require("../errors/userErrors");
 
-// export const createUser = async (req: Request, res: Response) => {
-//   try {
-//     const user = userRepository.create({
-//       ...req.body,
-//       reviews: [],
-//     });
-//     await userRepository.save(user);
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to create review" });
-//   }
-// };
+export const createUser = async (req: Request, res: Response) => {
+  try {
+    const user = userRepository.create({
+      ...req.body,
+      reviews: [],
+    });
+    await userRepository.save(user);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create review" });
+  }
+};
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {

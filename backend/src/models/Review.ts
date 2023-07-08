@@ -25,11 +25,11 @@ export class Review {
   @Column()
   currency: String;
 
-  @Column()
-  positionStartDate: Date;
+  @Column({ type: "date" })
+  positionStartDate: string;
 
-  @Column()
-  positionEndDate: Date;
+  @Column({ type: "date" })
+  positionEndDate: string;
 
   @Column()
   workType: String;

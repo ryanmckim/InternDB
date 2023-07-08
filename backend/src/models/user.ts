@@ -13,6 +13,9 @@ export class User {
   password: String;
 
   @Column({ type: "jsonb" })
-  @OneToMany(() => Review, (r) => r.userID, { cascade: true })
+  @OneToMany(() => Review, (r) => r.userID, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   reviews: Review[];
 }
