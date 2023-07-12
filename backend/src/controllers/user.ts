@@ -14,7 +14,6 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const user = userRepository.create({
       ...req.body,
-      reviews: [],
     });
     await userRepository.save(user);
     res.json(user);
@@ -39,13 +38,15 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 
     const reviews = user!.reviews;
-    for (const review of reviews!) {
-      const company = await companyRepository.findOneBy({
-        id: Equal(review.companyID),
-      });
-      company!.reviews = company!.reviews.filter((r) => r.id !== review.id);
-      await companyRepository.save(company!);
-      await reviewRepository.remove(review!);
+    if (reviews.length > 0) {
+      for (const review of reviews!) {
+        const company = await companyRepository.findOneBy({
+          id: Equal(review.companyID),
+        });
+        company!.reviews = company!.reviews.filter((r) => r.id !== review.id);
+        await companyRepository.save(company!);
+        await reviewRepository.remove(review!);
+      }
     }
 
     await userRepository.remove(user!);

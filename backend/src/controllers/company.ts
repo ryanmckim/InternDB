@@ -10,7 +10,6 @@ export const createCompany = async (req: Request, res: Response) => {
   try {
     const company = companyRepository.create({
       ...req.body,
-      reviews: [],
     });
     await companyRepository.save(company);
     res.json(company);

@@ -50,6 +50,7 @@ export const createReview = async (req: Request, res: Response) => {
     await companyRepository.save(company!);
     res.json(review);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to create review" });
   }
 };

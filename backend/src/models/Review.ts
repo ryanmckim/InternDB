@@ -8,11 +8,11 @@ export class Review {
   id: number;
 
   @Column({ unique: true })
-  @ManyToOne(() => User, (user) => user.reviews)
+  // @ManyToOne(() => User, (user) => user.reviews)
   userID: number;
 
   @Column({ unique: true })
-  @ManyToOne(() => Company, (company) => company.reviews)
+  // @ManyToOne(() => Company, (company) => company.reviews)
   companyID: number;
 
   @Column()

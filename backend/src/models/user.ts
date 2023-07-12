@@ -12,6 +12,7 @@ export class User {
   @Column()
   password: String;
 
-  @OneToMany(() => Review, (review) => review.userID)
+  // @OneToMany(() => Review, (review) => review.userID)
+  @Column({ type: "jsonb", default: [] })
   reviews: Review[];
 }
