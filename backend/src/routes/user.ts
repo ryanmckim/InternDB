@@ -1,15 +1,10 @@
-import {
-  displayUser,
-  newPassword,
-  deleteUser,
-  createUser,
-} from "../controllers/user";
+import { displayUser, newPassword, deleteUser } from "../controllers/user";
 import { Router } from "express";
 
 const router = Router();
 
-// Test route
-router.route("/").post(createUser);
+// // Test route
+// router.route("/").post(createUser);
 
 // GET request for profile page
 router.route("/:userID").get(displayUser);

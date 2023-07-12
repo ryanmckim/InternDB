@@ -1,14 +1,7 @@
-import {
-  displayCompanyInfo,
-  displayCompanies,
-  createCompany,
-} from "../controllers/company";
+import { displayCompanyInfo, displayCompanies } from "../controllers/company";
 import { Router } from "express";
 
 const router = Router();
-
-// Test
-router.route("/").post(createCompany);
 
 // GET request for companies on main page
 router.route("/").get(displayCompanies);

@@ -10,17 +10,17 @@ const companyRepository = AppDataSource.getRepository(Company);
 const reviewRepository = AppDataSource.getRepository(Review);
 const userErrors = require("../errors/userErrors");
 
-export const createUser = async (req: Request, res: Response) => {
-  try {
-    const user = userRepository.create({
-      ...req.body,
-    });
-    await userRepository.save(user);
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create review" });
-  }
-};
+// export const createUser = async (req: Request, res: Response) => {
+//   try {
+//     const user = userRepository.create({
+//       ...req.body,
+//     });
+//     await userRepository.save(user);
+//     res.json(user);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to create review" });
+//   }
+// };
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
