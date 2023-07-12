@@ -1,16 +1,18 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Company } from "./Company";
 import { User } from "./User";
+import { Company } from "./Company";
 
 @Entity("reviews")
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (u) => u.id, { onDelete: "CASCADE" })
+  @Column({ unique: true })
+  @ManyToOne(() => User, (user) => user.reviews)
   userID: number;
 
-  @ManyToOne(() => Company, (c) => c.id, { onDelete: "CASCADE" })
+  @Column({ unique: true })
+  @ManyToOne(() => Company, (company) => company.reviews)
   companyID: number;
 
   @Column()

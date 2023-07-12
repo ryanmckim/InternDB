@@ -6,16 +6,12 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   email: String;
 
   @Column()
   password: String;
 
-  @Column({ type: "jsonb" })
-  @OneToMany(() => Review, (r) => r.userID, {
-    cascade: true,
-    onDelete: "CASCADE",
-  })
+  @OneToMany(() => Review, (review) => review.userID)
   reviews: Review[];
 }

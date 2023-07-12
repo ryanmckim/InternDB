@@ -6,9 +6,7 @@ export class Company {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    unique: true,
-  })
+  @Column({ unique: true })
   name: String;
 
   @Column()
@@ -17,7 +15,6 @@ export class Company {
   @Column()
   numReviews: number;
 
-  @Column({ type: "jsonb" })
-  @OneToMany(() => Review, (r) => r.companyID)
+  @OneToMany(() => Review, (review) => review.companyID)
   reviews: Review[];
 }
