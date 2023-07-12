@@ -1,4 +1,5 @@
 import { displayUser, newPassword, deleteUser } from "../controllers/user";
+import { protect } from "../middleware/auth";
 import { Router } from "express";
 
 const router = Router();
@@ -7,12 +8,12 @@ const router = Router();
 // router.route("/").post(createUser);
 
 // GET request for profile page
-router.route("/:userID").get(displayUser);
+router.route("/:userID").get(protect, displayUser);
 
 // PUT request for changing password
-router.route("/:userID").put(newPassword);
+router.route("/:userID").put(protect, newPassword);
 
 // DELETE request for account deletion
-router.route("/:userID").delete(deleteUser);
+router.route("/:userID").delete(protect, deleteUser);
 
 module.exports = router;
