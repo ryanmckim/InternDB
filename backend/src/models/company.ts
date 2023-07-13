@@ -9,12 +9,6 @@ export class Company {
   @Column({ unique: true })
   name: String;
 
-  @Column()
-  avgSalary: number;
-
-  @Column()
-  numReviews: number;
-
   // @OneToMany(() => Review, (review) => review.companyID)
   @Column({ type: "jsonb", default: [] })
   reviews: Review[];
