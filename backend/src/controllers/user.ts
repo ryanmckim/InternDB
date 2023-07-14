@@ -70,6 +70,11 @@ export const displayUser = async (req: Request, res: Response) => {
         }
       }
     }
+    user!.reviews.sort(
+      (a, b) =>
+        new Date(b.positionEndDate).getTime() -
+        new Date(a.positionEndDate).getTime()
+    );
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: "Failed to display user details" });
