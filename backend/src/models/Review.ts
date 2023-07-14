@@ -1,17 +1,17 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Company } from "./Company";
-import { User } from "./User";
 
 @Entity("reviews")
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (u) => u.id)
+  @Column({ unique: true })
+  // @ManyToOne(() => User, (user) => user.reviews)
   userID: number;
 
-  @ManyToOne(() => Company, (c) => c.name)
-  company: String;
+  @Column({ unique: true })
+  // @ManyToOne(() => Company, (company) => company.reviews)
+  companyID: number;
 
   @Column()
   positionTitle: String;
@@ -25,11 +25,11 @@ export class Review {
   @Column()
   currency: String;
 
-  @Column()
-  positionStartDate: Date;
+  @Column({ type: "date" })
+  positionStartDate: string;
 
-  @Column()
-  positionEndDate: Date;
+  @Column({ type: "date" })
+  positionEndDate: string;
 
   @Column()
   workType: String;

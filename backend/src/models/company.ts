@@ -6,17 +6,10 @@ export class Company {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    unique: true,
-  })
+  @Column({ unique: true })
   name: String;
 
-  @Column()
-  avgSalary: number;
-
-  @Column()
-  numReviews: number;
-
-  @OneToMany(() => Review, (r) => r.company)
-  reviews: Array<Review>;
+  // @OneToMany(() => Review, (review) => review.companyID)
+  @Column({ type: "jsonb", default: [] })
+  reviews: Review[];
 }

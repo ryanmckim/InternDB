@@ -1,21 +1,19 @@
-import { Router } from "express";
+import { displayUser, newPassword, deleteUser } from "../controllers/user";
 import { protect } from "../middleware/auth";
-
-import {
-  getUserById,
-  updatePassword,
-  getReviewsByUserId,
-} from "../controllers/user";
+import { Router } from "express";
 
 const router = Router();
 
+// // Test route
+// router.route("/").post(createUser);
+
 // GET request for profile page
-router.route("/:userID").get(protect, getUserById);
+router.route("/:userID").get(protect, displayUser);
 
-// PUT request for changing passsword
-router.route("/:userID/password").put(protect, updatePassword);
+// PUT request for changing password
+router.route("/:userID").put(protect, newPassword);
 
-// GET request for reviews on profile page
-router.route("/:userID/review").get(protect, getReviewsByUserId);
+// DELETE request for account deletion
+router.route("/:userID").delete(protect, deleteUser);
 
 module.exports = router;
