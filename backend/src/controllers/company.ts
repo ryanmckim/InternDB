@@ -20,22 +20,7 @@ const companyErrors = require("../errors/companyErrors");
 
 export const displayCompanies = async (req: Request, res: Response) => {
   try {
-    let companies = null;
-    if (req.params.sort === "sortAlnum") {
-      companies = await companyRepository
-        .createQueryBuilder("company")
-        .leftJoin("company.reviews", "review")
-        .orderBy("review.name", "ASC")
-        .getMany();
-    } else if (req.params.sort === "sortSalary") {
-      companies = await companyRepository
-        .createQueryBuilder("company")
-        .leftJoin("company.reviews", "review")
-        .orderBy("review.salary", "ASC")
-        .getMany();
-    } else {
-      res.status(500).json({ message: "Error sorting companies" });
-    }
+    const companies = await companyRepository.find();
     res.json(companies);
   } catch (error) {
     res.status(500).json({ message: "Error retrieving companies" });
@@ -44,7 +29,7 @@ export const displayCompanies = async (req: Request, res: Response) => {
 
 export const displayCompanyInfo = async (req: Request, res: Response) => {
   try {
-    const company = await companyRepository.findOneBy({
+    let company = await companyRepository.findOneBy({
       id: Equal(parseInt(req.params.companyID)),
     });
     for (const error in companyErrors) {
@@ -55,18 +40,48 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
         }
       }
     }
-    if (req.params.sort == "sortMostRecent") {
+    if (req.body.sort == "sortMostRecent") {
       company!.reviews.sort(
         (a, b) =>
           new Date(b.positionEndDate).getTime() -
           new Date(a.positionEndDate).getTime()
       );
-    } else if (req.params.sort == "sortSalary") {
+    } else if (req.body.sort == "sortSalary") {
       company!.reviews.sort((a, b) => a.salary - b.salary);
     } else {
       res.status(500).json({ message: "Error sorting company reviews" });
     }
-    res.json(company);
+    let updatedCompany = null;
+    if (req.body.currency === "both") {
+      updatedCompany = company;
+    } else if (req.body.currency === "CAD") {
+      company!.reviews.filter((review) => {
+        return review.currency === "CAD";
+      });
+      const totalSalary = company!.reviews.reduce((sum, review) => {
+        return sum + review.salary;
+      }, 0);
+      const numOfReviews = company!.reviews.length;
+      const avgSalary = Math.round((totalSalary / numOfReviews) * 100) / 100;
+      updatedCompany = {
+        ...company,
+        avgSalary: avgSalary,
+      };
+    } else if (req.body.currency === "USD") {
+      updatedCompany = company!.reviews.filter((review) => {
+        return review.currency === "USD";
+      });
+      const totalSalary = company!.reviews.reduce((sum, review) => {
+        return sum + review.salary;
+      }, 0);
+      const numOfReviews = company!.reviews.length;
+      const avgSalary = Math.round((totalSalary / numOfReviews) * 100) / 100;
+      updatedCompany = {
+        ...company,
+        avgSalary: avgSalary,
+      };
+    }
+    res.json(updatedCompany);
   } catch (error) {
     res.status(500).json({ message: "Error retrieving company reviews" });
   }
