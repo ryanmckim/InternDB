@@ -1,15 +1,14 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../database";
-import { Review } from "../models/Review";
 import { User } from "../models/User";
+import { Review } from "../models/Review";
 import { Company } from "../models/Company";
 
-export const reviewRepository = AppDataSource.getRepository(Review);
-export const userRepository = AppDataSource.getRepository(User);
-export const companyRepository = AppDataSource.getRepository(Company);
+const companyRepository = require("../imports");
+const reviewRepository = require("../imports");
+const userRepository = require("../imports");
+const companyErrors = require("../errors/companyErrors");
 const reviewErrors = require("../errors/reviewErrors");
 const userErrors = require("../errors/userErrors");
-const companyErrors = require("../errors/companyErrors");
 
 export const createReview = async (req: Request, res: Response) => {
   try {
@@ -17,8 +16,6 @@ export const createReview = async (req: Request, res: Response) => {
       ...req.body,
       salary: parseInt(req.body.salary),
     });
-    await reviewRepository.save(review);
-
     // Add review to user
     const user = await userRepository.findOneBy({
       id: parseInt(req.body.userID),
@@ -31,9 +28,6 @@ export const createReview = async (req: Request, res: Response) => {
         }
       }
     }
-    user!.reviews.push(JSON.parse(JSON.stringify(review)));
-    await userRepository.save(user!);
-
     // Add review to company
     const company = await companyRepository.findOneBy({
       id: parseInt(req.body.companyID),
@@ -46,7 +40,10 @@ export const createReview = async (req: Request, res: Response) => {
         }
       }
     }
+    user!.reviews.push(JSON.parse(JSON.stringify(review)));
     company!.reviews.push(JSON.parse(JSON.stringify(review)));
+    await userRepository.save(user!);
+    await reviewRepository.save(review);
     await companyRepository.save(company!);
     res.json(review);
   } catch (error) {
@@ -57,10 +54,17 @@ export const createReview = async (req: Request, res: Response) => {
 
 export const editReview = async (req: Request, res: Response) => {
   try {
-    const updatedReview = {
-      ...req.body,
-      salary: parseInt(req.body.salary),
-    };
+    let updatedReview: Review;
+    if (req.body.hasOwnProperty("salary")) {
+      updatedReview = {
+        ...req.body,
+        salary: parseInt(req.body.salary),
+      };
+    } else {
+      updatedReview = {
+        ...req.body,
+      };
+    }
     const review = await reviewRepository.findOneBy({
       id: parseInt(req.params.reviewID),
     });
@@ -72,7 +76,6 @@ export const editReview = async (req: Request, res: Response) => {
         }
       }
     }
-
     // Find review for user
     const user = await userRepository.findOneBy({
       id: parseInt(req.body.userID),
@@ -86,7 +89,7 @@ export const editReview = async (req: Request, res: Response) => {
       }
     }
     const userIndex = user!.reviews.findIndex(
-      (index) => index.id === review!.id
+      (index: User) => index.id === review!.id
     );
 
     // Find review for company
@@ -102,7 +105,7 @@ export const editReview = async (req: Request, res: Response) => {
       }
     }
     const companyIndex = company!.reviews.findIndex(
-      (index) => index.id === review!.id
+      (index: Review) => index.id === review!.id
     );
 
     // Assign updated reviews
@@ -146,7 +149,7 @@ export const deleteReview = async (req: Request, res: Response) => {
       }
     }
     const userIndex = user!.reviews.findIndex(
-      (index) => index.id === review!.id
+      (index: User) => index.id === review!.id
     );
     if (userIndex !== -1) {
       user!.reviews.splice(userIndex, 1);
@@ -168,7 +171,7 @@ export const deleteReview = async (req: Request, res: Response) => {
       }
     }
     const companyIndex = company!.reviews.findIndex(
-      (index) => index.id === review!.id
+      (index: Company) => index.id === review!.id
     );
     if (companyIndex !== -1) {
       company!.reviews.splice(companyIndex, 1);

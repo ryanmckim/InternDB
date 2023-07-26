@@ -5,11 +5,9 @@ export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
   // @ManyToOne(() => User, (user) => user.reviews)
   userID: number;
 
-  @Column({ unique: true })
   // @ManyToOne(() => Company, (company) => company.reviews)
   companyID: number;
 

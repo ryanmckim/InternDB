@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../database";
 import { Company } from "../models/Company";
 import { Equal } from "typeorm";
+import { Review } from "../models/Review";
 
-export const companyRepository = AppDataSource.getRepository(Company);
 const companyErrors = require("../errors/companyErrors");
+const companyRepository = require("../imports");
 
 // export const createCompany = async (req: Request, res: Response) => {
 //   try {
@@ -40,46 +40,57 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
         }
       }
     }
-    if (req.body.sort == "sortMostRecent") {
-      company!.reviews.sort(
-        (a, b) =>
-          new Date(b.positionEndDate).getTime() -
-          new Date(a.positionEndDate).getTime()
+    let sortedCompany: Company;
+    if (req.query.sort === "sortMostRecent") {
+      sortedCompany = JSON.parse(
+        JSON.stringify(
+          company!.reviews.sort(
+            (a: Review, b: Review) =>
+              new Date(b.positionEndDate).getTime() -
+              new Date(a.positionEndDate).getTime()
+          )
+        )
       );
-    } else if (req.body.sort == "sortSalary") {
-      company!.reviews.sort((a, b) => a.salary - b.salary);
-    } else {
-      res.status(500).json({ message: "Error sorting company reviews" });
+    } else if (req.query.sort === "sortSalary") {
+      sortedCompany = JSON.parse(
+        JSON.stringify(
+          company!.reviews.sort((a: Review, b: Review) => a.salary - b.salary)
+        )
+      );
     }
-    let updatedCompany = null;
-    if (req.body.currency === "both") {
-      updatedCompany = company;
-    } else if (req.body.currency === "CAD") {
-      company!.reviews.filter((review) => {
-        return review.currency === "CAD";
-      });
-      const totalSalary = company!.reviews.reduce((sum, review) => {
-        return sum + review.salary;
-      }, 0);
-      const numOfReviews = company!.reviews.length;
+    let updatedCompany;
+    function calculateAverageSalary(reviews: Review[]) {
+      const totalSalary = reviews.reduce(
+        (sum: number, review: Review) => sum + review.salary,
+        0
+      );
+      const numOfReviews = reviews.length;
       const avgSalary = Math.round((totalSalary / numOfReviews) * 100) / 100;
-      updatedCompany = {
-        ...company,
-        avgSalary: avgSalary,
-      };
-    } else if (req.body.currency === "USD") {
-      updatedCompany = company!.reviews.filter((review) => {
-        return review.currency === "USD";
-      });
-      const totalSalary = company!.reviews.reduce((sum, review) => {
-        return sum + review.salary;
-      }, 0);
-      const numOfReviews = company!.reviews.length;
-      const avgSalary = Math.round((totalSalary / numOfReviews) * 100) / 100;
-      updatedCompany = {
-        ...company,
-        avgSalary: avgSalary,
-      };
+      return [avgSalary, numOfReviews];
+    }
+    function updateCompanyByCurrency(company: Company, currency: string) {
+      if (currency === "both") {
+        return company;
+      } else {
+        const updatedCompany = company.reviews.filter((review) => {
+          return review.currency === currency;
+        });
+        const reviewInfo = calculateAverageSalary(updatedCompany);
+        const avgSalary = reviewInfo[0];
+        const numOfReviews = reviewInfo[1];
+        return {
+          ...updatedCompany,
+          avgSalary: avgSalary,
+          numOfReviews: numOfReviews,
+        };
+      }
+    }
+    if (req.query.currency === "both") {
+      updatedCompany = sortedCompany!;
+    } else if (req.query.currency === "CAD") {
+      updatedCompany = updateCompanyByCurrency(sortedCompany!, "CAD");
+    } else if (req.query.currency === "USD") {
+      updatedCompany = updateCompanyByCurrency(sortedCompany!, "USD");
     }
     res.json(updatedCompany);
   } catch (error) {

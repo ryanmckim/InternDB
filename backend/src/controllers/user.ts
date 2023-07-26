@@ -1,13 +1,10 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../database";
-import { User } from "../models/User";
 import { Equal } from "typeorm";
-import { Company } from "../models/Company";
 import { Review } from "../models/Review";
 
-const userRepository = AppDataSource.getRepository(User);
-const companyRepository = AppDataSource.getRepository(Company);
-const reviewRepository = AppDataSource.getRepository(Review);
+const companyRepository = require("../imports");
+const reviewRepository = require("../imports");
+const userRepository = require("../imports");
 const userErrors = require("../errors/userErrors");
 
 // export const createUser = async (req: Request, res: Response) => {
@@ -43,7 +40,9 @@ export const deleteUser = async (req: Request, res: Response) => {
         const company = await companyRepository.findOneBy({
           id: Equal(review.companyID),
         });
-        company!.reviews = company!.reviews.filter((r) => r.id !== review.id);
+        company!.reviews = company!.reviews.filter(
+          (r: Review) => r.id !== review.id
+        );
         await companyRepository.save(company!);
         await reviewRepository.remove(review!);
       }
@@ -71,7 +70,7 @@ export const displayUser = async (req: Request, res: Response) => {
       }
     }
     user!.reviews.sort(
-      (a, b) =>
+      (a: Review, b: Review) =>
         new Date(b.positionEndDate).getTime() -
         new Date(a.positionEndDate).getTime()
     );
