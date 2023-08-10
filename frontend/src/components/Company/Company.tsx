@@ -47,7 +47,7 @@ export default function Company() {
             </Card>
             <HStack spacing="0" justifyContent="flex-end">
               <Box w='200px'>
-                <Select placeholder='Sort by'>
+                <Select>
                   <option>Most Recent</option>
                   <option>Least Recent</option>
                   <option>Highest salary</option>
