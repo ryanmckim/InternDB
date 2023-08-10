@@ -1,9 +1,10 @@
 import React from 'react';
-import Login from "./components/Login/Login"
+import Company from "./components/Company/Company"
 
 function App() {
   return (
     <div>
+      <Company/>
     </div>
   );
 }
