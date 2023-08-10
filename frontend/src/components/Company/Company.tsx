@@ -26,46 +26,47 @@ export default function Company() {
     return (
       <React.Fragment>
         <Center>
-          <Card boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
-                bg="white"
-                borderRadius="5px"
-                maxWidth={600}
-                padding="3rem"
-                margin="1rem">
-          {/* <Card> */}
-            <SimpleGrid columns={3} spacing={4}>
-              <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-                <Heading fontSize="60px" fontFamily="arial">SAP</Heading>
+          <div className='company'>
+            <Card boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
+                  bg="white"
+                  borderRadius="5px"
+                  maxWidth={600}
+                  padding="3rem"
+                  margin="1rem">
+              <SimpleGrid columns={3} spacing={4}>
+                <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                  <Heading fontSize="60px" fontFamily="arial">SAP</Heading>
+                </Box>
+                <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                  <Text textAlign="center" fontFamily="arial" fontWeight="bold">Avg CAD Salary: $20.00/hr</Text>
+                </Box>
+                <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                  <Text fontFamily="arial" fontWeight="bold">21 Reviews</Text>
+                </Box>
+              </SimpleGrid>
+            </Card>
+            <HStack spacing="0" justifyContent="flex-end">
+              <Box w='200px'>
+                <Select placeholder='Sort by'>
+                  <option>Most Recent</option>
+                  <option>Least Recent</option>
+                  <option>Highest salary</option>
+                  <option>Lowest salary</option>
+                </Select>
               </Box>
-              <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-                <Text textAlign="center" fontFamily="arial" fontWeight="bold">Avg CAD Salary: $20.00/hr</Text>
+              <Box textAlign="center" p={10}>
+                <div className='toggle-button-group' onClick={changeCurrency}>
+                  <div className='toggle-button' style={{backgroundColor: currency === "CAD" ? '#3498db' : '#fff'}}>
+                    <h1 className='toggle-button-text' style={{color: currency === "CAD" ? '#fff' : '#3498db' }}>CAD</h1>
+                  </div>
+                  <div className='toggle-button' style={{backgroundColor: currency === "USD" ? '#3498db' : '#fff'}}>
+                    <h1 className='toggle-button-text' style={{color: currency === "USD" ? '#fff' : '#3498db' }}>USD</h1>
+                  </div>
+                </div>
               </Box>
-              <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-                <Text fontFamily="arial" fontWeight="bold">21 Reviews</Text>
-              </Box>
-            </SimpleGrid>
-          </Card>
+            </HStack>
+          </div>
         </Center>
-        <HStack>
-          <Box w='200px'>
-            <Select placeholder='Sort by'>
-              <option>Most Recent</option>
-              <option>Least Recent</option>
-              <option>Highest salary</option>
-              <option>Lowest salary</option>
-            </Select>
-          </Box>
-          <Box textAlign="center" p={10}>
-            <div className='toggle-button-group' onClick={changeCurrency}>
-              <div className='toggle-button' style={{backgroundColor: currency === "CAD" ? '#3498db' : '#fff'}}>
-                <h1 className='toggle-button-text' style={{color: currency === "CAD" ? '#fff' : '#3498db' }}>CAD</h1>
-              </div>
-              <div className='toggle-button' style={{backgroundColor: currency === "USD" ? '#3498db' : '#fff'}}>
-                <h1 className='toggle-button-text' style={{color: currency === "USD" ? '#fff' : '#3498db' }}>USD</h1>
-              </div>
-            </div>
-          </Box>
-        </HStack>
       </React.Fragment>
     )
 }
