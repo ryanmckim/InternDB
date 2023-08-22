@@ -2,22 +2,23 @@ import { Request, Response } from "express";
 import { Equal } from "typeorm";
 import { Review } from "../models/Review";
 
-const companyRepository = require("../imports");
-const reviewRepository = require("../imports");
-const userRepository = require("../imports");
+import { companyRepository } from "../imports";
+import { reviewRepository } from "../imports";
+import { userRepository } from "../imports";
 const userErrors = require("../errors/userErrors");
 
-// export const createUser = async (req: Request, res: Response) => {
-//   try {
-//     const user = userRepository.create({
-//       ...req.body,
-//     });
-//     await userRepository.save(user);
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to create review" });
-//   }
-// };
+export const createUser = async (req: Request, res: Response) => {
+  try {
+    const user = userRepository.create({
+      ...req.body,
+    });
+    await userRepository.save(user);
+    res.json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to create user" });
+  }
+};
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {

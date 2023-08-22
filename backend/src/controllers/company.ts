@@ -3,20 +3,20 @@ import { Company } from "../models/Company";
 import { Equal } from "typeorm";
 import { Review } from "../models/Review";
 
+import { companyRepository } from "../imports";
 const companyErrors = require("../errors/companyErrors");
-const companyRepository = require("../imports");
 
-// export const createCompany = async (req: Request, res: Response) => {
-//   try {
-//     const company = companyRepository.create({
-//       ...req.body,
-//     });
-//     await companyRepository.save(company);
-//     res.json(company);
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to create company" });
-//   }
-// };
+export const createCompany = async (req: Request, res: Response) => {
+  try {
+    const company = companyRepository.create({
+      ...req.body,
+    });
+    await companyRepository.save(company);
+    res.json(company);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create company" });
+  }
+};
 
 export const displayCompanies = async (req: Request, res: Response) => {
   try {
@@ -41,6 +41,7 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
       }
     }
     let sortedCompany: Company;
+
     if (req.query.sort === "sortMostRecent") {
       sortedCompany = JSON.parse(
         JSON.stringify(
@@ -51,12 +52,30 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
           )
         )
       );
-    } else if (req.query.sort === "sortSalary") {
+    } else if (req.query.sort === "sortLeastRecent") {
+      sortedCompany = JSON.parse(
+        JSON.stringify(
+          company!.reviews.sort(
+            (a: Review, b: Review) =>
+              new Date(a.positionEndDate).getTime() -
+              new Date(b.positionEndDate).getTime()
+          )
+        )
+      );
+    } else if (req.query.sort === "sortHighestSalary") {
       sortedCompany = JSON.parse(
         JSON.stringify(
           company!.reviews.sort((a: Review, b: Review) => a.salary - b.salary)
         )
       );
+    } else if (req.query.sort === "sortLowestSalary") {
+      sortedCompany = JSON.parse(
+        JSON.stringify(
+          company!.reviews.sort((a: Review, b: Review) => b.salary - a.salary)
+        )
+      );
+    } else {
+      res.status(500).json({ message: "Query missing" });
     }
     let updatedCompany;
     function calculateAverageSalary(reviews: Review[]) {
@@ -85,9 +104,7 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
         };
       }
     }
-    if (req.query.currency === "both") {
-      updatedCompany = sortedCompany!;
-    } else if (req.query.currency === "CAD") {
+    if (req.query.currency === "CAD") {
       updatedCompany = updateCompanyByCurrency(sortedCompany!, "CAD");
     } else if (req.query.currency === "USD") {
       updatedCompany = updateCompanyByCurrency(sortedCompany!, "USD");

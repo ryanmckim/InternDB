@@ -6,9 +6,11 @@ export class Review {
   id: number;
 
   // @ManyToOne(() => User, (user) => user.reviews)
+  @Column()
   userID: number;
 
   // @ManyToOne(() => Company, (company) => company.reviews)
+  @Column()
   companyID: number;
 
   @Column()
@@ -30,16 +32,7 @@ export class Review {
   positionEndDate: string;
 
   @Column()
-  workType: String;
-
-  @Column()
   workOption: String;
-
-  @Column()
-  benefits: String;
-
-  @Column()
-  interviewProcess: String;
 
   @Column()
   comments: String;

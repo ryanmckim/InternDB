@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
-import { User } from "../models/User";
 import { Review } from "../models/Review";
-import { Company } from "../models/Company";
 
-const companyRepository = require("../imports");
-const reviewRepository = require("../imports");
-const userRepository = require("../imports");
+import { companyRepository } from "../imports";
+import { reviewRepository } from "../imports";
+import { userRepository } from "../imports";
+import { error } from "console";
 const companyErrors = require("../errors/companyErrors");
 const reviewErrors = require("../errors/reviewErrors");
 const userErrors = require("../errors/userErrors");
@@ -14,6 +13,8 @@ export const createReview = async (req: Request, res: Response) => {
   try {
     const review = reviewRepository.create({
       ...req.body,
+      userID: parseInt(req.body.userID),
+      companyID: parseInt(req.body.companyID),
       salary: parseInt(req.body.salary),
     });
     // Add review to user
@@ -40,14 +41,14 @@ export const createReview = async (req: Request, res: Response) => {
         }
       }
     }
+    await reviewRepository.save(review);
     user!.reviews.push(JSON.parse(JSON.stringify(review)));
     company!.reviews.push(JSON.parse(JSON.stringify(review)));
     await userRepository.save(user!);
-    await reviewRepository.save(review);
     await companyRepository.save(company!);
+    console.log(review);
     res.json(review);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Failed to create review" });
   }
 };
@@ -55,16 +56,12 @@ export const createReview = async (req: Request, res: Response) => {
 export const editReview = async (req: Request, res: Response) => {
   try {
     let updatedReview: Review;
-    if (req.body.hasOwnProperty("salary")) {
-      updatedReview = {
-        ...req.body,
-        salary: parseInt(req.body.salary),
-      };
-    } else {
-      updatedReview = {
-        ...req.body,
-      };
-    }
+    updatedReview = {
+      ...req.body,
+      userID: parseInt(req.body.userID),
+      companyID: parseInt(req.body.companyID),
+      salary: parseInt(req.body.salary),
+    };
     const review = await reviewRepository.findOneBy({
       id: parseInt(req.params.reviewID),
     });
@@ -89,7 +86,7 @@ export const editReview = async (req: Request, res: Response) => {
       }
     }
     const userIndex = user!.reviews.findIndex(
-      (index: User) => index.id === review!.id
+      (review) => review.id === review!.id
     );
 
     // Find review for company
@@ -105,7 +102,7 @@ export const editReview = async (req: Request, res: Response) => {
       }
     }
     const companyIndex = company!.reviews.findIndex(
-      (index: Review) => index.id === review!.id
+      (review) => review.id === review!.id
     );
 
     // Assign updated reviews
@@ -135,10 +132,9 @@ export const deleteReview = async (req: Request, res: Response) => {
         }
       }
     }
-
     // Delete review for user
     const user = await userRepository.findOneBy({
-      id: parseInt(req.body.userID),
+      id: review!.userID,
     });
     for (const error in userErrors) {
       if (userErrors[error](user)) {
@@ -149,7 +145,7 @@ export const deleteReview = async (req: Request, res: Response) => {
       }
     }
     const userIndex = user!.reviews.findIndex(
-      (index: User) => index.id === review!.id
+      (review) => review.id === reviewID
     );
     if (userIndex !== -1) {
       user!.reviews.splice(userIndex, 1);
@@ -157,7 +153,6 @@ export const deleteReview = async (req: Request, res: Response) => {
     } else {
       return res.status(404).json({ error: "Review not found" });
     }
-
     // Delete review for company
     const company = await companyRepository.findOneBy({
       id: parseInt(req.body.companyID),
@@ -171,7 +166,7 @@ export const deleteReview = async (req: Request, res: Response) => {
       }
     }
     const companyIndex = company!.reviews.findIndex(
-      (index: Company) => index.id === review!.id
+      (review) => review.id === reviewID
     );
     if (companyIndex !== -1) {
       company!.reviews.splice(companyIndex, 1);
@@ -182,7 +177,8 @@ export const deleteReview = async (req: Request, res: Response) => {
 
     await reviewRepository.remove(review!);
     res.send("Review deleted successfully");
-  } catch {
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Failed to delete review" });
   }
 };
