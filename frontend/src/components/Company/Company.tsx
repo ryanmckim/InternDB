@@ -1,5 +1,5 @@
-import { Card, Heading, Center, SimpleGrid, Text, Box, Select, HStack} from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
+import { Card, Heading, Center, SimpleGrid, Text, Box, Select, HStack} from '@chakra-ui/react'
 import './company.scss'
 
 export default function Company() {

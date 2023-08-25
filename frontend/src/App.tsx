@@ -1,3 +1,4 @@
+import React from 'react'
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Company from "./components/Company/Company";
 import Profile from './components/Profile/Profile';
@@ -8,7 +9,7 @@ import Register from './components/Register/Register';
 function App() {
   return (
     <Router>
-      <div>
+      <React.Fragment>
         <Routes>
           <Route path="/" element={<Home/>}></Route>
           <Route path="/login" element={<Login/>}></Route>
@@ -16,7 +17,7 @@ function App() {
           <Route path="/profile" element={<Profile/>}></Route>
           <Route path="/company/:id" element={<Company/>}></Route>
         </Routes>
-      </div>
+      </React.Fragment>
     </Router>
   );
 }
