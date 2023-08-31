@@ -4,7 +4,6 @@ import { Review } from "../models/Review";
 import { companyRepository } from "../imports";
 import { reviewRepository } from "../imports";
 import { userRepository } from "../imports";
-import { error } from "console";
 const companyErrors = require("../errors/companyErrors");
 const reviewErrors = require("../errors/reviewErrors");
 const userErrors = require("../errors/userErrors");
@@ -144,6 +143,8 @@ export const deleteReview = async (req: Request, res: Response) => {
         }
       }
     }
+    console.log("review", reviewID)
+    console.log(req.body.companyID)
     const userIndex = user!.reviews.findIndex(
       (review) => review.id === reviewID
     );
@@ -155,7 +156,7 @@ export const deleteReview = async (req: Request, res: Response) => {
     }
     // Delete review for company
     const company = await companyRepository.findOneBy({
-      id: parseInt(req.body.companyID),
+      id: review!.companyID,
     });
     for (const error in companyErrors) {
       if (companyErrors[error](company)) {
@@ -168,6 +169,7 @@ export const deleteReview = async (req: Request, res: Response) => {
     const companyIndex = company!.reviews.findIndex(
       (review) => review.id === reviewID
     );
+    console.log("company", companyIndex)
     if (companyIndex !== -1) {
       company!.reviews.splice(companyIndex, 1);
       await companyRepository.save(company!);
@@ -175,6 +177,7 @@ export const deleteReview = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Review not found" });
     }
 
+    console.log(review)
     await reviewRepository.remove(review!);
     res.send("Review deleted successfully");
   } catch (error) {

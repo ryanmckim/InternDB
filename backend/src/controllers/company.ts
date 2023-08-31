@@ -40,10 +40,10 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
         }
       }
     }
-    let sortedCompany: Company;
+    let sortedReviews;
 
-    if (req.query.sort === "sortMostRecent") {
-      sortedCompany = JSON.parse(
+    if (req.query.sort === "mostRecent") {
+      sortedReviews = JSON.parse(
         JSON.stringify(
           company!.reviews.sort(
             (a: Review, b: Review) =>
@@ -52,8 +52,8 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
           )
         )
       );
-    } else if (req.query.sort === "sortLeastRecent") {
-      sortedCompany = JSON.parse(
+    } else if (req.query.sort === "leastRecent") {
+      sortedReviews = JSON.parse(
         JSON.stringify(
           company!.reviews.sort(
             (a: Review, b: Review) =>
@@ -62,22 +62,21 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
           )
         )
       );
-    } else if (req.query.sort === "sortHighestSalary") {
-      sortedCompany = JSON.parse(
-        JSON.stringify(
-          company!.reviews.sort((a: Review, b: Review) => a.salary - b.salary)
-        )
-      );
-    } else if (req.query.sort === "sortLowestSalary") {
-      sortedCompany = JSON.parse(
+    } else if (req.query.sort === "highestSalary") {
+      sortedReviews = JSON.parse(
         JSON.stringify(
           company!.reviews.sort((a: Review, b: Review) => b.salary - a.salary)
+        )
+      );
+    } else if (req.query.sort === "lowestSalary") {
+      sortedReviews = JSON.parse(
+        JSON.stringify(
+          company!.reviews.sort((a: Review, b: Review) => a.salary - b.salary)
         )
       );
     } else {
       res.status(500).json({ message: "Query missing" });
     }
-    let updatedCompany;
     function calculateAverageSalary(reviews: Review[]) {
       const totalSalary = reviews.reduce(
         (sum: number, review: Review) => sum + review.salary,
@@ -87,30 +86,24 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
       const avgSalary = Math.round((totalSalary / numOfReviews) * 100) / 100;
       return [avgSalary, numOfReviews];
     }
-    function updateCompanyByCurrency(company: Company, currency: string) {
-      if (currency === "both") {
-        return company;
-      } else {
-        const updatedCompany = company.reviews.filter((review) => {
-          return review.currency === currency;
-        });
-        const reviewInfo = calculateAverageSalary(updatedCompany);
-        const avgSalary = reviewInfo[0];
-        const numOfReviews = reviewInfo[1];
-        return {
-          ...updatedCompany,
-          avgSalary: avgSalary,
-          numOfReviews: numOfReviews,
-        };
-      }
+    function updateCompanyByCurrency(reviews: Review[], currency: string) {
+      const updatedReview = reviews.filter((review) => {
+        return review.currency === currency;
+      });
+      const reviewInfo = calculateAverageSalary(updatedReview);
+      const avgSalary = reviewInfo[0];
+      const numOfReviews = reviewInfo[1];
+      return {
+        ...company,
+        reviews: updatedReview,
+        avgSalary,
+        numOfReviews,
+      };
     }
-    if (req.query.currency === "CAD") {
-      updatedCompany = updateCompanyByCurrency(sortedCompany!, "CAD");
-    } else if (req.query.currency === "USD") {
-      updatedCompany = updateCompanyByCurrency(sortedCompany!, "USD");
-    }
+    const updatedCompany = updateCompanyByCurrency(sortedReviews!, req.query.currency as string);
     res.json(updatedCompany);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Error retrieving company reviews" });
   }
 };
