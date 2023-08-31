@@ -22,9 +22,8 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const userID = parseInt(req.params.userID);
     const user = await userRepository.findOneBy({
-      id: Equal(userID),
+      id: Equal(parseInt(req.params.userID)),
     });
     for (const error in userErrors) {
       if (userErrors[error](user)) {
@@ -58,9 +57,8 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const displayUser = async (req: Request, res: Response) => {
   try {
-    const userID = parseInt(req.params.userID);
     const user = await userRepository.findOneBy({
-      id: Equal(userID),
+      id: Equal(parseInt(req.params.userID)),
     });
     for (const error in userErrors) {
       if (userErrors[error](user)) {
@@ -83,10 +81,9 @@ export const displayUser = async (req: Request, res: Response) => {
 
 export const newPassword = async (req: Request, res: Response) => {
   try {
-    const userID = parseInt(req.params.userID);
     const newPassword = req.body.newPassword;
     const user = await userRepository.findOneBy({
-      id: userID,
+      id: parseInt(req.params.userID),
     });
     for (const error in userErrors) {
       if (userErrors[error](user)) {

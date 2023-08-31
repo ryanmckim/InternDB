@@ -1,27 +1,31 @@
 import { Request, Response } from "express";
-import { Company } from "../models/Company";
 import { Equal } from "typeorm";
 import { Review } from "../models/Review";
 
 import { companyRepository } from "../imports";
 const companyErrors = require("../errors/companyErrors");
 
-export const createCompany = async (req: Request, res: Response) => {
-  try {
-    const company = companyRepository.create({
-      ...req.body,
-    });
-    await companyRepository.save(company);
-    res.json(company);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create company" });
-  }
-};
+// export const createCompany = async (req: Request, res: Response) => {
+//   try {
+//     const company = companyRepository.create({
+//       ...req.body,
+//     });
+//     await companyRepository.save(company);
+//     res.json(company);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to create company" });
+//   }
+// };
 
 export const displayCompanies = async (req: Request, res: Response) => {
   try {
     const companies = await companyRepository.find();
-    res.json(companies);
+    const updatedCompanies = companies.map((company) => ({
+      id: company.id,
+      name: company.name,
+      numOfReviews: company.reviews.length,
+    }));
+    res.json(updatedCompanies);
   } catch (error) {
     res.status(500).json({ message: "Error retrieving companies" });
   }
@@ -100,10 +104,13 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
         numOfReviews,
       };
     }
-    const updatedCompany = updateCompanyByCurrency(sortedReviews!, req.query.currency as string);
+    const updatedCompany = updateCompanyByCurrency(
+      sortedReviews!,
+      req.query.currency as string
+    );
     res.json(updatedCompany);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: "Error retrieving company reviews" });
   }
 };
