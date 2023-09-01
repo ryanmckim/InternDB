@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 import { Matches } from "class-validator";
 import { Review } from "./Review";
 import { emailRe, pwdRe } from "../constants/regex";
