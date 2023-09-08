@@ -19,7 +19,7 @@ export class Review {
   @Column()
   location: String;
 
-  @Column()
+  @Column({ type: "float"})
   salary: number;
 
   @Column()

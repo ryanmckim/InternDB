@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { Review } from "../models/Review";
 
 import { companyRepository } from "../imports";
 import { reviewRepository } from "../imports";
@@ -14,7 +13,6 @@ export const createReview = async (req: Request, res: Response) => {
       ...req.body,
       userID: parseInt(req.body.userID),
       companyID: parseInt(req.body.companyID),
-      salary: parseInt(req.body.salary),
     });
     // Add review to user
     const user = await userRepository.findOneBy({
@@ -45,22 +43,15 @@ export const createReview = async (req: Request, res: Response) => {
     company!.reviews.push(JSON.parse(JSON.stringify(review)));
     await userRepository.save(user!);
     await companyRepository.save(company!);
-    console.log(review);
     res.json(review);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Failed to create review" });
   }
 };
 
 export const editReview = async (req: Request, res: Response) => {
   try {
-    let updatedReview: Review;
-    updatedReview = {
-      ...req.body,
-      userID: parseInt(req.body.userID),
-      companyID: parseInt(req.body.companyID),
-      salary: parseInt(req.body.salary),
-    };
     const review = await reviewRepository.findOneBy({
       id: parseInt(req.params.reviewID),
     });
@@ -72,9 +63,10 @@ export const editReview = async (req: Request, res: Response) => {
         }
       }
     }
+
     // Find review for user
     const user = await userRepository.findOneBy({
-      id: parseInt(req.body.userID),
+      id: review!.userID,
     });
     for (const error in userErrors) {
       if (userErrors[error](user)) {
@@ -90,7 +82,7 @@ export const editReview = async (req: Request, res: Response) => {
 
     // Find review for company
     const company = await companyRepository.findOneBy({
-      id: parseInt(req.body.companyID),
+      id: review!.companyID,
     });
     for (const error in companyErrors) {
       if (companyErrors[error](company)) {
@@ -103,9 +95,9 @@ export const editReview = async (req: Request, res: Response) => {
     const companyIndex = company!.reviews.findIndex(
       (review) => review.id === review!.id
     );
-
+    
     // Assign updated reviews
-    Object.assign(review, updatedReview);
+    Object.assign(review, req.body);
     company!.reviews[companyIndex] = review!;
     user!.reviews[userIndex] = review!;
     await reviewRepository.save(review!);
@@ -143,8 +135,7 @@ export const deleteReview = async (req: Request, res: Response) => {
         }
       }
     }
-    console.log("review", reviewID)
-    console.log(req.body.companyID)
+
     const userIndex = user!.reviews.findIndex(
       (review) => review.id === reviewID
     );
@@ -169,7 +160,7 @@ export const deleteReview = async (req: Request, res: Response) => {
     const companyIndex = company!.reviews.findIndex(
       (review) => review.id === reviewID
     );
-    console.log("company", companyIndex)
+
     if (companyIndex !== -1) {
       company!.reviews.splice(companyIndex, 1);
       await companyRepository.save(company!);
@@ -177,7 +168,6 @@ export const deleteReview = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Review not found" });
     }
 
-    console.log(review)
     await reviewRepository.remove(review!);
     res.send("Review deleted successfully");
   } catch (error) {
