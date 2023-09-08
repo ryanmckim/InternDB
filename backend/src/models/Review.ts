@@ -1,17 +1,17 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Company } from "./Company";
-import { User } from "./User";
 
 @Entity("reviews")
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (u) => u.id)
+  // @ManyToOne(() => User, (user) => user.reviews)
+  @Column()
   userID: number;
 
-  @ManyToOne(() => Company, (c) => c.name)
-  company: String;
+  // @ManyToOne(() => Company, (company) => company.reviews)
+  @Column()
+  companyID: number;
 
   @Column()
   positionTitle: String;
@@ -19,29 +19,20 @@ export class Review {
   @Column()
   location: String;
 
-  @Column()
+  @Column({ type: "float"})
   salary: number;
 
   @Column()
   currency: String;
 
-  @Column()
-  positionStartDate: Date;
+  @Column({ type: "date" })
+  positionStartDate: string;
 
-  @Column()
-  positionEndDate: Date;
-
-  @Column()
-  workType: String;
+  @Column({ type: "date" })
+  positionEndDate: string;
 
   @Column()
   workOption: String;
-
-  @Column()
-  benefits: String;
-
-  @Column()
-  interviewProcess: String;
 
   @Column()
   comments: String;
