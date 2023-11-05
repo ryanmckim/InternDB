@@ -10,6 +10,6 @@ const router = Router();
 router.route("/").get(displayCompanies);
 
 // GET request for company info on a company page
-router.route("/:companyID").get(displayCompanyInfo);
+router.route("/:id").get(displayCompanyInfo);
 
 module.exports = router;

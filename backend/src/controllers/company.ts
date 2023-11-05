@@ -34,7 +34,7 @@ export const displayCompanies = async (req: Request, res: Response) => {
 export const displayCompanyInfo = async (req: Request, res: Response) => {
   try {
     let company = await companyRepository.findOneBy({
-      id: Equal(parseInt(req.params.companyID)),
+      id: Equal(parseInt(req.params.id)),
     });
     for (const error in companyErrors) {
       if (companyErrors[error](company)) {

@@ -45,7 +45,7 @@ export const createReview = async (req: Request, res: Response) => {
     await companyRepository.save(company!);
     res.json(review);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ error: "Failed to create review" });
   }
 };
@@ -53,7 +53,7 @@ export const createReview = async (req: Request, res: Response) => {
 export const editReview = async (req: Request, res: Response) => {
   try {
     const review = await reviewRepository.findOneBy({
-      id: parseInt(req.params.reviewID),
+      id: parseInt(req.params.id),
     });
     for (const error in reviewErrors) {
       if (reviewErrors[error](review)) {
@@ -95,7 +95,7 @@ export const editReview = async (req: Request, res: Response) => {
     const companyIndex = company!.reviews.findIndex(
       (review) => review.id === review!.id
     );
-    
+
     // Assign updated reviews
     Object.assign(review, req.body);
     company!.reviews[companyIndex] = review!;
@@ -111,9 +111,9 @@ export const editReview = async (req: Request, res: Response) => {
 
 export const deleteReview = async (req: Request, res: Response) => {
   try {
-    const reviewID = parseInt(req.params.reviewID);
+    const id = parseInt(req.params.id);
     const review = await reviewRepository.findOneBy({
-      id: reviewID,
+      id: id,
     });
     for (const error in reviewErrors) {
       if (reviewErrors[error](review)) {
@@ -136,9 +136,7 @@ export const deleteReview = async (req: Request, res: Response) => {
       }
     }
 
-    const userIndex = user!.reviews.findIndex(
-      (review) => review.id === reviewID
-    );
+    const userIndex = user!.reviews.findIndex((review) => review.id === id);
     if (userIndex !== -1) {
       user!.reviews.splice(userIndex, 1);
       await userRepository.save(user!);
@@ -158,7 +156,7 @@ export const deleteReview = async (req: Request, res: Response) => {
       }
     }
     const companyIndex = company!.reviews.findIndex(
-      (review) => review.id === reviewID
+      (review) => review.id === id
     );
 
     if (companyIndex !== -1) {
