@@ -8,7 +8,13 @@ const router = Router();
 router.use(protect);
 
 // GET request for profile page
-router.route("/:id").get(hasOwnUserPerm, displayUser);
+router
+  .route("/:id")
+  .get(
+    hasPermission([PERMISSIONS.VIEW_OWN_PROFILE, PERMISSIONS.VIEW_ANY_PROFILE]),
+    hasOwnUserPerm,
+    displayUser
+  );
 
 // PUT request for changing password
 router
@@ -23,7 +29,7 @@ router
 router
   .route("/:id")
   .delete(
-    hasPermission([PERMISSIONS.DELETE_ANY_USER]),
+    hasPermission([PERMISSIONS.DELETE_OWN_USER, PERMISSIONS.DELETE_ANY_USER]),
     hasOwnUserPerm,
     deleteUser
   );

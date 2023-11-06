@@ -8,4 +8,6 @@ export enum PERMISSIONS {
   DELETE_ANY_REVIEW = "can delete any reviews",
   EDIT_ANY_REVIEW = "can edit any reviews",
   DELETE_ANY_USER = "can delete any users",
+  VIEW_OWN_PROFILE = "can view own profile",
+  VIEW_ANY_PROFILE = "can view any profile",
 }

@@ -9,26 +9,27 @@ const userErrors = require("../errors/userErrors");
 
 export const createReview = async (req: Request, res: Response) => {
   try {
+    const reviewRequest = req.body.review;
     const review = reviewRepository.create({
-      ...req.body,
-      userID: parseInt(req.body.userID),
-      companyID: parseInt(req.body.companyID),
+      ...reviewRequest,
     });
     // Add review to user
-    const user = await userRepository.findOneBy({
-      id: parseInt(req.body.userID),
+    const user = await userRepository.find({
+      where: {
+        id: reviewRequest.userID,
+      },
     });
     for (const error in userErrors) {
-      if (userErrors[error](user)) {
-        switch (error) {
-          case "InvalidUser":
+      switch (error) {
+        case "InvalidUser":
+          if (userErrors[error](user)) {
             return res.status(404).json({ error: "User not found" });
-        }
+          }
       }
     }
     // Add review to company
-    const company = await companyRepository.findOneBy({
-      id: parseInt(req.body.companyID),
+    const company = await companyRepository.find({
+      where: { id: reviewRequest.companyID },
     });
     for (const error in companyErrors) {
       if (companyErrors[error](company)) {
@@ -39,8 +40,8 @@ export const createReview = async (req: Request, res: Response) => {
       }
     }
     await reviewRepository.save(review);
-    user!.reviews.push(JSON.parse(JSON.stringify(review)));
-    company!.reviews.push(JSON.parse(JSON.stringify(review)));
+    user[0]!.reviews.push(JSON.parse(JSON.stringify(review)));
+    company[0]!.reviews.push(JSON.parse(JSON.stringify(review)));
     await userRepository.save(user!);
     await companyRepository.save(company!);
     res.json(review);
@@ -69,11 +70,11 @@ export const editReview = async (req: Request, res: Response) => {
       id: review!.userID,
     });
     for (const error in userErrors) {
-      if (userErrors[error](user)) {
-        switch (error) {
-          case "InvalidUser":
+      switch (error) {
+        case "InvalidUser":
+          if (userErrors[error](user)) {
             return res.status(404).json({ error: "User not found" });
-        }
+          }
       }
     }
     const userIndex = user!.reviews.findIndex(
@@ -97,7 +98,7 @@ export const editReview = async (req: Request, res: Response) => {
     );
 
     // Assign updated reviews
-    Object.assign(review, req.body);
+    Object.assign(review, req.body.review);
     company!.reviews[companyIndex] = review!;
     user!.reviews[userIndex] = review!;
     await reviewRepository.save(review!);
@@ -128,11 +129,11 @@ export const deleteReview = async (req: Request, res: Response) => {
       id: review!.userID,
     });
     for (const error in userErrors) {
-      if (userErrors[error](user)) {
-        switch (error) {
-          case "InvalidUser":
+      switch (error) {
+        case "InvalidUser":
+          if (userErrors[error](user)) {
             return res.status(404).json({ error: "User not found" });
-        }
+          }
       }
     }
 

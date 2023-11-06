@@ -7,18 +7,18 @@ import { reviewRepository } from "../imports";
 import { userRepository } from "../imports";
 const userErrors = require("../errors/userErrors");
 
-export const createUser = async (req: Request, res: Response) => {
-  try {
-    const user = userRepository.create({
-      ...req.body,
-    });
-    await userRepository.save(user);
-    res.json(user);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Failed to create user" });
-  }
-};
+// export const createUser = async (req: Request, res: Response) => {
+//   try {
+//     const user = userRepository.create({
+//       ...req.body,
+//     });
+//     await userRepository.save(user);
+//     res.json(user);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ error: "Failed to create user" });
+//   }
+// };
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
@@ -26,11 +26,11 @@ export const deleteUser = async (req: Request, res: Response) => {
       id: Equal(parseInt(req.params.id)),
     });
     for (const error in userErrors) {
-      if (userErrors[error](user)) {
-        switch (error) {
-          case "InvalidUser":
+      switch (error) {
+        case "InvalidUser":
+          if (userErrors[error](user)) {
             return res.status(404).json({ error: "User not found" });
-        }
+          }
       }
     }
 
@@ -61,11 +61,11 @@ export const displayUser = async (req: Request, res: Response) => {
       id: Equal(parseInt(req.params.id)),
     });
     for (const error in userErrors) {
-      if (userErrors[error](user)) {
-        switch (error) {
-          case "InvalidUser":
+      switch (error) {
+        case "InvalidUser":
+          if (userErrors[error](user)) {
             return res.status(404).json({ error: "User not found" });
-        }
+          }
       }
     }
     user!.reviews.sort(
@@ -85,16 +85,26 @@ export const newPassword = async (req: Request, res: Response) => {
     const user = await userRepository.findOneBy({
       id: parseInt(req.params.id),
     });
+
     for (const error in userErrors) {
-      if (userErrors[error](user)) {
-        switch (error) {
-          case "InvalidUser":
+      switch (error) {
+        case "InvalidUser":
+          if (userErrors[error](user)) {
             return res.status(404).json({ error: "User not found" });
-        }
+          }
+        case "InvalidPwd":
+          if (userErrors[error](newPassword)) {
+            return res.status(400).json({ error: "Invalid password" });
+          }
       }
     }
 
+    if (user!.matchPassword(newPassword)) {
+      return res.status(400).json({ error: "Password is same as before" });
+    }
+
     user!.password = newPassword;
+    user!.hashPassword();
     await userRepository.save(user!);
     res.send("Password changed sucessfully");
   } catch {

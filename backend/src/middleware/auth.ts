@@ -68,7 +68,7 @@ export const hasPermission =
       }
     }
 
-    if (!req.body.permissions) {
+    if (req.body.permissions.length === 0) {
       res.status(403).send({ message: "You do not have the right permission" });
       return;
     }
@@ -82,9 +82,16 @@ export const hasOwnReviewPerm = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
+  const userId = req.body.user.id;
 
   if (!id) {
-    next();
+    if (userId === req.body.review.userID) {
+      next();
+      return;
+    } else {
+      res.status(403).send({ message: "You do not have the permission" });
+      return;
+    }
   }
 
   const ANY_PERMS = [
@@ -94,21 +101,21 @@ export const hasOwnReviewPerm = async (
 
   if (req.body.permissions) {
     for (let perm of ANY_PERMS) {
-      if (req.body.permissions.contains(perm)) {
+      if (req.body.permissions.includes(perm)) {
         next();
+        return;
       }
     }
   }
 
   try {
-    const userId = req.body.user.id;
     const review = await reviewRepository.findOne({
       where: {
         id: parseInt(id),
       },
     });
 
-    if (userId !== review!.userID) {
+    if (review && userId !== review!.userID) {
       res.status(403).send({ message: "You do not have the permission" });
       return;
     }
@@ -128,21 +135,18 @@ export const hasOwnUserPerm = (
 ) => {
   const { id } = req.params;
 
-  if (!id) {
-    next();
-  }
-
-  const ANY_PERMS = [PERMISSIONS.DELETE_ANY_USER];
+  const ANY_PERMS = [PERMISSIONS.DELETE_ANY_USER, PERMISSIONS.VIEW_ANY_PROFILE];
 
   if (req.body.permissions) {
     for (let perm of ANY_PERMS) {
-      if (req.body.permissions.contains(perm)) {
+      if (req.body.permissions.includes(perm)) {
         next();
+        return;
       }
     }
   }
 
-  if (req.body.user.id !== id) {
+  if (req.body.user.id !== parseInt(id)) {
     res.status(403).send({ message: "You do not have the permission" });
     return;
   }
