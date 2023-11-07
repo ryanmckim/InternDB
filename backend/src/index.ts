@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { AppDataSource } from "./database/index";
 import "reflect-metadata";
 const express = require("express");

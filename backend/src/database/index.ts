@@ -1,8 +1,7 @@
-require("dotenv").config();
 import { DataSource } from "typeorm";
 import { URL } from "url";
 
-const dbUrl = new URL(process.env.DATABASE_URL || "");
+const dbUrl = new URL(process.env.DATABASE_URL!);
 const routingId = dbUrl.searchParams.get("options");
 dbUrl.searchParams.delete("options");
 
