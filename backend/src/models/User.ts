@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   BeforeInsert,
+  OneToMany,
 } from "typeorm";
 import { Matches } from "class-validator";
 import { Review } from "./Review";
@@ -26,8 +27,9 @@ export class User {
   @Matches(pwdRe)
   password: string;
 
-  // @OneToMany(() => Review, (review) => review.userID)
-  @Column({ type: "jsonb", default: [] })
+  @OneToMany((_type) => Review, (review) => review.user, {
+    cascade: ["insert", "update", "remove"],
+  })
   reviews: Review[];
 
   @Column({ type: "enum", enum: ROLES, default: ROLES.USER })

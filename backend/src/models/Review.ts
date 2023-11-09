@@ -1,17 +1,31 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
+import { User } from "./User";
+import { Company } from "./Company";
 
 @Entity("reviews")
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @ManyToOne(() => User, (user) => user.reviews)
-  @Column()
-  userID: number;
+  @ManyToOne((_type) => User, (user) => user.reviews, {
+    cascade: ["insert", "update"],
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "userId" })
+  user: User;
 
-  // @ManyToOne(() => Company, (company) => company.reviews)
-  @Column()
-  companyID: number;
+  @ManyToOne((_type) => Company, (company) => company.reviews, {
+    cascade: ["insert", "update"],
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "companyId" })
+  company: Company;
 
   @Column()
   positionTitle: String;

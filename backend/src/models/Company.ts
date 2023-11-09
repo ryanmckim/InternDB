@@ -9,7 +9,8 @@ export class Company {
   @Column({ unique: true })
   name: String;
 
-  // @OneToMany(() => Review, (review) => review.companyID)
-  @Column({ type: "jsonb", default: [] })
+  @OneToMany((_type) => Review, (review) => review.company, {
+    cascade: ["insert", "update", "remove"],
+  })
   reviews: Review[];
 }
