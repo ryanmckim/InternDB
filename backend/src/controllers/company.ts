@@ -1,7 +1,4 @@
 import { Request, Response } from "express";
-import { Equal, UpdateDateColumn } from "typeorm";
-import { Review } from "../models/Review";
-
 import { companyRepository } from "../imports";
 const companyErrors = require("../errors/companyErrors");
 

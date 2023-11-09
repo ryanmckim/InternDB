@@ -1,9 +1,4 @@
 import { Request, Response } from "express";
-import { Equal } from "typeorm";
-import { Review } from "../models/Review";
-
-import { companyRepository } from "../imports";
-import { reviewRepository } from "../imports";
 import { userRepository } from "../imports";
 const userErrors = require("../errors/userErrors");
 
