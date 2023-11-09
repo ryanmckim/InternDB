@@ -22,44 +22,28 @@ const userErrors = require("../errors/userErrors");
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const user = await userRepository.findOneBy({
-      id: Equal(parseInt(req.params.id)),
-    });
-    for (const error in userErrors) {
-      switch (error) {
-        case "InvalidUser":
-          if (userErrors[error](user)) {
-            return res.status(404).json({ error: "User not found" });
-          }
-      }
+    if (!req.params.id) {
+      return res.status(400).send({ error: "Missing id" });
     }
-
-    const reviews = user!.reviews;
-    if (reviews.length > 0) {
-      for (const review of reviews!) {
-        const company = await companyRepository.findOneBy({
-          id: Equal(review.companyID),
-        });
-        company!.reviews = company!.reviews.filter(
-          (r: Review) => r.id !== review.id
-        );
-        await companyRepository.save(company!);
-        await reviewRepository.remove(review!);
-      }
-    }
-
-    await userRepository.remove(user!);
+    await userRepository.delete(req.params.id);
     res.send("User deleted successfully");
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to delete account" });
   }
 };
 
 export const displayUser = async (req: Request, res: Response) => {
   try {
-    const user = await userRepository.findOneBy({
-      id: Equal(parseInt(req.params.id)),
-    });
+    const id = req.params.id;
+    const user = await userRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.reviews", "review")
+      .leftJoinAndSelect("review.company", "company")
+      .where("user.id = :id", { id })
+      .orderBy("review.positionEndDate", "DESC")
+      .getOne();
+
     for (const error in userErrors) {
       switch (error) {
         case "InvalidUser":
@@ -68,13 +52,9 @@ export const displayUser = async (req: Request, res: Response) => {
           }
       }
     }
-    user!.reviews.sort(
-      (a: Review, b: Review) =>
-        new Date(b.positionEndDate).getTime() -
-        new Date(a.positionEndDate).getTime()
-    );
     res.json(user);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to display user details" });
   }
 };
@@ -107,7 +87,8 @@ export const newPassword = async (req: Request, res: Response) => {
     user!.hashPassword();
     await userRepository.save(user!);
     res.send("Password changed sucessfully");
-  } catch {
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to update password" });
   }
 };

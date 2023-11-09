@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Equal } from "typeorm";
+import { Equal, UpdateDateColumn } from "typeorm";
 import { Review } from "../models/Review";
 
 import { companyRepository } from "../imports";
@@ -19,23 +19,48 @@ const companyErrors = require("../errors/companyErrors");
 
 export const displayCompanies = async (req: Request, res: Response) => {
   try {
-    const companies = await companyRepository.find();
-    const updatedCompanies = companies.map((company) => ({
-      id: company.id,
-      name: company.name,
-      numOfReviews: company.reviews.length,
-    }));
-    res.json(updatedCompanies);
+    const companies = await companyRepository
+      .createQueryBuilder("company")
+      .leftJoin("company.reviews", "reviews")
+      .select("company.id", "id")
+      .addSelect("company.name", "name")
+      .addSelect("COUNT(reviews.id)", "numOfReviews")
+      .groupBy("company.id")
+      .getRawMany();
+    res.json(companies);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Error retrieving companies" });
   }
 };
 
 export const displayCompanyInfo = async (req: Request, res: Response) => {
   try {
-    let company = await companyRepository.findOneBy({
-      id: Equal(parseInt(req.params.id)),
-    });
+    const id = req.params.id;
+    const { currency, sort } = req.query;
+
+    const company = await companyRepository
+      .createQueryBuilder("company")
+      .where("company.id = :id", { id })
+      .getOne();
+
+    let reviewsQuery = await companyRepository
+      .createQueryBuilder("company")
+      .leftJoinAndSelect("company.reviews", "reviews")
+      .where("company.id = :id", { id })
+      .andWhere("reviews.currency = :currency", { currency });
+
+    const companyInfo = await companyRepository
+      .createQueryBuilder("company")
+      .leftJoin("company.reviews", "reviews")
+      .select("company.id", "id")
+      .addSelect("COUNT(reviews.id)", "numOfReviews")
+      .addSelect("AVG(reviews.salary)", "avgSalary")
+      .where("company.id = :id", { id })
+      .andWhere("reviews.currency = :currency", { currency })
+      .groupBy("company.id")
+      .getRawOne();
+
     for (const error in companyErrors) {
       if (companyErrors[error](company)) {
         switch (error) {
@@ -44,71 +69,36 @@ export const displayCompanyInfo = async (req: Request, res: Response) => {
         }
       }
     }
-    let sortedReviews;
 
-    if (req.query.sort === "mostRecent") {
-      sortedReviews = JSON.parse(
-        JSON.stringify(
-          company!.reviews.sort(
-            (a: Review, b: Review) =>
-              new Date(b.positionEndDate).getTime() -
-              new Date(a.positionEndDate).getTime()
-          )
-        )
-      );
-    } else if (req.query.sort === "leastRecent") {
-      sortedReviews = JSON.parse(
-        JSON.stringify(
-          company!.reviews.sort(
-            (a: Review, b: Review) =>
-              new Date(a.positionEndDate).getTime() -
-              new Date(b.positionEndDate).getTime()
-          )
-        )
-      );
-    } else if (req.query.sort === "highestSalary") {
-      sortedReviews = JSON.parse(
-        JSON.stringify(
-          company!.reviews.sort((a: Review, b: Review) => b.salary - a.salary)
-        )
-      );
-    } else if (req.query.sort === "lowestSalary") {
-      sortedReviews = JSON.parse(
-        JSON.stringify(
-          company!.reviews.sort((a: Review, b: Review) => a.salary - b.salary)
-        )
-      );
-    } else {
-      res.status(500).json({ message: "Query missing" });
+    switch (sort) {
+      case "mostRecent":
+        reviewsQuery = reviewsQuery.orderBy("reviews.positionEndDate", "DESC");
+        break;
+      case "leastRecent":
+        reviewsQuery = reviewsQuery.orderBy("reviews.positionEndDate", "ASC");
+        break;
+      case "highestSalary":
+        reviewsQuery = reviewsQuery.orderBy("reviews.salary", "DESC");
+        break;
+      case "lowestSalary":
+        reviewsQuery = reviewsQuery.orderBy("reviews.salary", "ASC");
+        break;
+      default:
+        return res.status(500).json({ message: "Query missing or incorrect" });
     }
-    function calculateAverageSalary(reviews: Review[]) {
-      const totalSalary = reviews.reduce(
-        (sum: number, review: Review) => sum + review.salary,
-        0
-      );
-      const numOfReviews = reviews.length;
-      const avgSalary = Math.round((totalSalary / numOfReviews) * 100) / 100;
-      return [avgSalary, numOfReviews];
-    }
-    function updateCompanyByCurrency(reviews: Review[], currency: string) {
-      const updatedReview = reviews.filter((review) => {
-        return review.currency === currency;
-      });
-      const reviewInfo = calculateAverageSalary(updatedReview);
-      const avgSalary = reviewInfo[0];
-      const numOfReviews = reviewInfo[1];
-      return {
-        ...company,
-        reviews: updatedReview,
-        avgSalary,
-        numOfReviews,
-      };
-    }
-    const updatedCompany = updateCompanyByCurrency(
-      sortedReviews!,
-      req.query.currency as string
-    );
-    res.json(updatedCompany);
+
+    const reviewResponse = await reviewsQuery.getOne();
+    const numOfReviews = companyInfo ? companyInfo.numOfReviews : 0;
+    const avgSalary = companyInfo ? companyInfo.avgSalary : null;
+    const reviews = reviewResponse ? reviewResponse.reviews : [];
+
+    const companyResponse = {
+      ...company,
+      numOfReviews,
+      avgSalary,
+      reviews,
+    };
+    res.json(companyResponse);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error retrieving company reviews" });

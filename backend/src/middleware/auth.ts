@@ -85,7 +85,7 @@ export const hasOwnReviewPerm = async (
   const userId = req.body.user.id;
 
   if (!id) {
-    if (userId === req.body.review.userID) {
+    if (userId === req.body.review.userId) {
       next();
       return;
     } else {
@@ -109,13 +109,14 @@ export const hasOwnReviewPerm = async (
   }
 
   try {
-    const review = await reviewRepository.findOne({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    const review = await reviewRepository
+      .createQueryBuilder("review")
+      .leftJoinAndSelect("review.user", "user")
+      .select(["review.id", "user.id"])
+      .where("review.id = :id", { id })
+      .getOne();
 
-    if (review && userId !== review!.userID) {
+    if (review && userId !== review!.user.id) {
       res.status(403).send({ message: "You do not have the permission" });
       return;
     }
