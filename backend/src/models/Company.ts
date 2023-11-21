@@ -3,7 +3,7 @@ import { Review } from "./Review";
 
 @Entity("companies")
 export class Company {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: number;
 
   @Column({ unique: true })

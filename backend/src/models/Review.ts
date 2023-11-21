@@ -10,7 +10,7 @@ import { Company } from "./Company";
 
 @Entity("reviews")
 export class Review {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: number;
 
   @ManyToOne((_type) => User, (user) => user.reviews, {
@@ -33,21 +33,21 @@ export class Review {
   @Column()
   location: String;
 
-  @Column({ type: "float" })
+  @Column({ type: "float", nullable: true })
   salary: number;
 
-  @Column()
+  @Column({ nullable: true })
   currency: String;
 
-  @Column({ type: "date" })
+  @Column({ type: "date", nullable: true })
   positionStartDate: string;
 
-  @Column({ type: "date" })
+  @Column({ type: "date", nullable: true })
   positionEndDate: string;
 
-  @Column()
+  @Column({ nullable: true })
   workOption: String;
 
-  @Column()
+  @Column({ nullable: true })
   comments: String;
 }
