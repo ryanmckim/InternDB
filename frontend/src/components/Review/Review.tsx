@@ -1,32 +1,57 @@
-import { Card, CardHeader, Heading, Text, CardFooter, Center, HStack } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React from 'react';
+import { Card, CardHeader, CardBody, Heading, Text, Center, Stack, StackDivider, Box } from '@chakra-ui/react';
 
-export default function Review(props: {positionTitle: string, location: string, salary: number, currency: string, positionStartDate: string, positionEndDate: string, workOption: string, comments: string}) {  
-    return(
-      <React.Fragment>
-        <Center>    
+interface ReviewProps {
+  reviews: any,
+  loading: boolean
+}
+
+export default function Review(props: ReviewProps) {  
+  if (props.loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  return(
+    <React.Fragment>
+      <Center>
+        <Box>
+          {props.reviews.map((review: any) => (
             <Card boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
-                  bg="white"
-                  borderRadius="5px"
-                  width={500}
-                  margin="1rem"
-                  alignItems='center'>
+              bg="white"
+              borderRadius="5px"
+              width={500}
+              margin="1rem">
               <CardHeader>
-                <Heading size='md'>
-                  {props.positionTitle}
-                </Heading>
+                <Heading size='md'>{review.positionTitle}</Heading>
               </CardHeader>
-              <HStack>
-                <Text>{props.location}</Text>
-                <Text>${props.salary}/hour</Text>
-              </HStack>
-              <HStack>
-                <Text>{props.positionStartDate} to {props.positionEndDate}</Text>
-                <Text>{props.workOption}</Text>
-              </HStack>
-              <CardFooter>{props.comments}</CardFooter>
+              <CardBody>
+                <Stack divider={<StackDivider />} spacing='2'>
+                  <Box>
+                    <Heading size='xs' textTransform='uppercase'>Location</Heading>
+                    <Text pt='2' fontSize='sm'>{review.location}</Text>
+                  </Box>
+                  <Box>
+                    <Heading size='xs' textTransform='uppercase'>Salary</Heading>
+                    <Text pt='2' fontSize='sm'>${review.salary} {review.currency}/hr</Text>
+                  </Box>
+                  <Box>
+                    <Heading size='xs' textTransform='uppercase'>Date</Heading>
+                    <Text pt='2' fontSize='sm'>{review.positionStartDate} to {review.positionEndDate}</Text>
+                  </Box>
+                  <Box>
+                    <Heading size='xs' textTransform='uppercase'>Work Option</Heading>
+                    <Text pt='2' fontSize='sm'>{review.workOption}</Text>
+                  </Box>
+                  <Box>
+                    <Heading size='xs' textTransform='uppercase'>Comments</Heading>
+                    <Text pt='2' fontSize='sm'>{review.comments}</Text>
+                  </Box>
+                </Stack>
+              </CardBody>
             </Card>
-        </Center>
-      </React.Fragment>
-    )
+          ))}
+        </Box>
+      </Center>
+    </React.Fragment>
+  )
 }

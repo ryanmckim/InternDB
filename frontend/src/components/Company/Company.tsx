@@ -1,12 +1,19 @@
 import { Card, Heading, Center, SimpleGrid, Text, Box, Select, HStack} from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
-import ReactPaginate from 'react-paginate';
+import React, { useState } from 'react'
 import './company.scss'
 import Review from '../Review/Review';
+import Pagination from '../Pagination/Pagination';
 
 export default function Company() {
     const [company, setCompany] = useState([]);
     const [currency, setCurrency] = useState("CAD");
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [currentReview, setCurrentReview] = useState(1);
+    const [reviewsPerPage] = useState(7);
+    const indexOfLastReview = currentReview * reviewsPerPage;
+    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    const paginate = (pageNumber: number) => setCurrentReview(pageNumber);
 
     const changeCurrency = () => {
       setCurrency(currency === "CAD" ? "USD" : "CAD");
@@ -18,21 +25,27 @@ export default function Company() {
       {positionTitle: "Software Engineer Intern", location: "Vancouver, BC, Canada", salary: 30, currency: "USD", positionStartDate: "09-08-2023", positionEndDate: "10-08-2024", workOption: "Hybrid", comments: "Hello"},
       {positionTitle: "Software Engineer Intern", location: "Vancouver, BC, Canada", salary: 30, currency: "USD", positionStartDate: "09-08-2023", positionEndDate: "10-08-2024", workOption: "Hybrid", comments: "Hello"},
       {positionTitle: "Software Engineer Intern", location: "Vancouver, BC, Canada", salary: 30, currency: "USD", positionStartDate: "09-08-2023", positionEndDate: "10-08-2024", workOption: "Hybrid", comments: "Hello"},
+      {positionTitle: "Software Engineer Intern", location: "Vancouver, BC, Canada", salary: 30, currency: "USD", positionStartDate: "09-08-2023", positionEndDate: "10-08-2024", workOption: "Hybrid", comments: "Hello"},
+      {positionTitle: "Software Engineer Intern", location: "Vancouver, BC, Canada", salary: 30, currency: "USD", positionStartDate: "09-08-2023", positionEndDate: "10-08-2024", workOption: "Hybrid", comments: "Hello"},
+      {positionTitle: "Software Engineer Intern", location: "Vancouver, BC, Canada", salary: 30, currency: "USD", positionStartDate: "09-08-2023", positionEndDate: "10-08-2024", workOption: "Hybrid", comments: "Hello"},
+      {positionTitle: "Software Engineer Intern", location: "Vancouver, BC, Canada", salary: 30, currency: "USD", positionStartDate: "09-08-2023", positionEndDate: "10-08-2024", workOption: "Hybrid", comments: "Hello"},
       {positionTitle: "Software Engineer Intern", location: "Vancouver, BC, Canada", salary: 30, currency: "USD", positionStartDate: "09-08-2023", positionEndDate: "10-08-2024", workOption: "Hybrid", comments: "Hello"}
-  ]
+    ]
 
-    useEffect(() => {
-      const fetchCompanies = async () => {
-        try {
-          const res = await fetch(`http://localhost:8000/api/v1/company/`);
-          const jsonRes = await res.json();
-          setCompany(jsonRes);
-        } catch (error) {
-          console.error("Error fetching company data:", error);
-        }
-      };
-      fetchCompanies();
-    }, []);
+    const currentReviews = reviewData.slice(indexOfFirstReview, indexOfLastReview);
+
+    // useEffect(() => {
+    //   const fetchCompanies = async () => {
+    //     try {
+    //       const res = await fetch(`http://localhost:8000/api/v1/company/`);
+    //       const jsonRes = await res.json();
+    //       setCompany(jsonRes);
+    //     } catch (error) {
+    //       console.error("Error fetching company data:", error);
+    //     }
+    //   };
+    //   fetchCompanies();
+    // }, []);
 
     return (
       <React.Fragment>
@@ -79,9 +92,14 @@ export default function Company() {
           </div>
         </Center>
         <button className='add-review-button'>+</button>
-        {reviewData.map((review, index) => (
-          <Review positionTitle={review.positionTitle} location={review.location} salary={review.salary} currency={review.currency} positionStartDate={review.positionStartDate} positionEndDate={review.positionEndDate} workOption={review.workOption} comments={review.comments}/>
-        ))}
+        <Review reviews={currentReviews} loading={loading}/>
+        <Center>
+          <Pagination
+            reviewsPerPage={reviewsPerPage}
+            totalReviews={reviewData.length}
+            paginate={paginate}
+          />
+        </Center>
       </React.Fragment>
     )
 }
