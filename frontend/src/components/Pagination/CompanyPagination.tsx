@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import './pagination.scss'
 
 interface PaginationProps {
-    reviewsPerPage: number,
-    totalReviews: number,
+    companiesPerPage: number,
+    totalCompanies: number,
     paginate: any
 }
 
-export default function Pagination (props: PaginationProps) {
+export default function CompanyPagination (props: PaginationProps) {
   const pageNumbers = [];
   const [activePage, setActivePage] = useState(1);
 
-  for (let i = 1; i <= Math.ceil(props.totalReviews / props.reviewsPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(props.totalCompanies / props.companiesPerPage); i++) {
     pageNumbers.push(i);
   }
 
@@ -20,8 +20,9 @@ export default function Pagination (props: PaginationProps) {
         <a style={{
             backgroundColor: activePage === number ? '#4CAF50' : 'transparent',
             color: activePage === number ? 'white' : 'black',
-            borderRadius: '5px'
-      }} onClick={() => {props.paginate(number); setActivePage(number);}} href='!#'>
+            borderRadius: '5px',
+            cursor: 'pointer'
+      }} onClick={() => {props.paginate(number); setActivePage(number);}}>
           {number}
         </a>
       </li>

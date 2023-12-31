@@ -15,8 +15,10 @@ export default function Review(props: ReviewProps) {
     <React.Fragment>
       <Center>
         <Box>
-          {props.reviews.map((review: any) => (
-            <Card boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
+          {props.reviews.map((review: any, index: number) => (
+            <Card
+              key={review.id || index}
+              boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
               bg="white"
               borderRadius="5px"
               width={500}
