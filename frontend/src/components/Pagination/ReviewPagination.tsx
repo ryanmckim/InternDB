@@ -1,15 +1,29 @@
-import { useState } from 'react'
-import './pagination.scss'
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './pagination.scss';
 
 interface PaginationProps {
     reviewsPerPage: number,
     totalReviews: number,
-    paginate: any
+    paginate: any,
+    currentPage: number
 }
 
 export default function ReviewPagination (props: PaginationProps) {
   const pageNumbers = [];
   const [activePage, setActivePage] = useState(1);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setActivePage(props.currentPage);
+  }, [props.currentPage]);
+
+  const handlePageClick = (number: number) => {
+    props.paginate(number);
+    setActivePage(number);
+    // FIX AFTER API CALL
+    navigate(`/company/23/page/${number}`);
+  };
 
   for (let i = 1; i <= Math.ceil(props.totalReviews / props.reviewsPerPage); i++) {
     pageNumbers.push(i);
@@ -22,7 +36,7 @@ export default function ReviewPagination (props: PaginationProps) {
             color: activePage === number ? 'white' : 'black',
             borderRadius: '5px',
             cursor: 'pointer'
-      }} onClick={() => {props.paginate(number); setActivePage(number);}}>
+      }} onClick={() => handlePageClick(number)}>
           {number}
         </a>
       </li>

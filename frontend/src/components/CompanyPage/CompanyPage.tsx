@@ -1,12 +1,12 @@
 import { Card, Heading, Center, SimpleGrid, Text, Box, Select, HStack} from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom';
 import './companyPage.scss'
 import Review from '../Review/Review';
 import ReviewPagination from '../Pagination/ReviewPagination';
 import ReviewModal from '../Modal/ReviewModal';
 
 export default function CompanyPage() {
-    const [company, setCompany] = useState([]);
     const [currency, setCurrency] = useState("CAD");
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -14,6 +14,14 @@ export default function CompanyPage() {
     const [reviewsPerPage] = useState(7);
     const indexOfLastReview = currentReview * reviewsPerPage;
     const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    const { pageNumber } = useParams();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const page = pageNumber ? parseInt(pageNumber) : 1;
+      setCurrentReview(page);
+    }, [pageNumber]);
+
     const paginate = (pageNumber: number) => {
       setCurrentReview(pageNumber);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -21,6 +29,11 @@ export default function CompanyPage() {
 
     const changeCurrency = () => {
       setCurrency(currency === "CAD" ? "USD" : "CAD");
+    }
+
+    // EDIT THIS AFTER API FETCH
+    if (!pageNumber) {
+      navigate('company/23/page/1');
     }
 
     const reviewData = [
@@ -37,19 +50,6 @@ export default function CompanyPage() {
     ]
 
     const currentReviews = reviewData.slice(indexOfFirstReview, indexOfLastReview);
-
-    // useEffect(() => {
-    //   const fetchCompanies = async () => {
-    //     try {
-    //       const res = await fetch(`http://localhost:8000/api/v1/company/`);
-    //       const jsonRes = await res.json();
-    //       setCompany(jsonRes);
-    //     } catch (error) {
-    //       console.error("Error fetching company data:", error);
-    //     }
-    //   };
-    //   fetchCompanies();
-    // }, []);
 
     return (
       <React.Fragment>
@@ -102,6 +102,7 @@ export default function CompanyPage() {
             reviewsPerPage={reviewsPerPage}
             totalReviews={reviewData.length}
             paginate={paginate}
+            currentPage={currentReview}
           />
         </Center>
       </React.Fragment>

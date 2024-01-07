@@ -1,6 +1,11 @@
 .pagination {
   display: inline-block;
 
+  & li.active a {
+    background-color: #4CAF50;
+    color: white;
+  }
+
   & a {
     color: black;
     float: left;

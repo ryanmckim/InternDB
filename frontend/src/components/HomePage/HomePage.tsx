@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Company from '../Company/Company';
 import { Center, Heading, Box, Select, SimpleGrid, Flex, Input, VStack } from '@chakra-ui/react'
 import CompanyPagination from '../Pagination/CompanyPagination';
@@ -9,10 +10,22 @@ export default function HomePage() {
     const companiesPerPage = 24;
     const indexOfLastCompany = currentCompany * companiesPerPage;
     const indexOfFirstReview = indexOfLastCompany - companiesPerPage;
+    const { pageNumber } = useParams();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const page = pageNumber ? parseInt(pageNumber) : 1;
+        setCurrentCompany(page);
+    }, [pageNumber]);
+
     const paginate = (pageNumber: number) => {
         setCurrentCompany(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+
+    if (!pageNumber) {
+        navigate('/page/1');
+    }
 
     const companyData = [
         {name: "SAP", avgSalary: 30, numReviews: 20, reviews: []},
@@ -84,6 +97,7 @@ export default function HomePage() {
                     companiesPerPage={companiesPerPage}
                     totalCompanies={companyData.length}
                     paginate={paginate}
+                    currentPage={currentCompany}
                 />
             </Center>
         </Flex>
