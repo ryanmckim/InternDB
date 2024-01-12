@@ -1,4 +1,4 @@
-export default function Profile() {
+export default function LoginPage() {
     return(
         <div></div>
     )
