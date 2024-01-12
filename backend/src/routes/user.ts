@@ -1,21 +1,37 @@
+import { PERMISSIONS } from "../constants/permissions";
+import { displayUser, newPassword, deleteUser } from "../controllers/user";
+import { hasOwnUserPerm, protect, hasPermission } from "../middleware/auth";
 import { Router } from "express";
-import { protect } from "../middleware/auth";
-
-import {
-  getUserById,
-  updatePassword,
-  getReviewsByUserId,
-} from "../controllers/user";
 
 const router = Router();
 
+router.use(protect);
+
 // GET request for profile page
-router.route("/:userID").get(protect, getUserById);
+router
+  .route("/:id")
+  .get(
+    hasPermission([PERMISSIONS.VIEW_OWN_PROFILE, PERMISSIONS.VIEW_ANY_PROFILE]),
+    hasOwnUserPerm,
+    displayUser
+  );
 
-// PUT request for changing passsword
-router.route("/:userID/password").put(protect, updatePassword);
+// PUT request for changing password
+router
+  .route("/:id")
+  .put(
+    hasPermission([PERMISSIONS.UPDATE_OWN_PWD]),
+    hasOwnUserPerm,
+    newPassword
+  );
 
-// GET request for reviews on profile page
-router.route("/:userID/review").get(protect, getReviewsByUserId);
+// DELETE request for account deletion
+router
+  .route("/:id")
+  .delete(
+    hasPermission([PERMISSIONS.DELETE_OWN_USER, PERMISSIONS.DELETE_ANY_USER]),
+    hasOwnUserPerm,
+    deleteUser
+  );
 
 module.exports = router;

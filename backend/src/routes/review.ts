@@ -1,16 +1,40 @@
-import { Router } from "express";
-import { protect } from "../controllers/auth";
 import { createReview, editReview, deleteReview } from "../controllers/review";
+import { Router } from "express";
+import { protect, hasPermission, hasOwnReviewPerm } from "../middleware/auth";
+import { PERMISSIONS } from "../constants/permissions";
 
 const router = Router();
 
+router.use(protect);
+
 // POST request for review creation
-router.route("/review").post(protect, createReview);
+router
+  .route("/")
+  .post(
+    hasPermission([PERMISSIONS.CREATE_OWN_REVIEW]),
+    hasOwnReviewPerm,
+    createReview
+  );
 
 // PUT request for editing review
-router.route("/review/:reviewID").put(protect, editReview);
+router
+  .route("/:id")
+  .put(
+    hasPermission([PERMISSIONS.EDIT_OWN_REVIEW, PERMISSIONS.EDIT_ANY_REVIEW]),
+    hasOwnReviewPerm,
+    editReview
+  );
 
 // DELETE request for deleting reviews through the profile page
-router.route("/review/:reviewID").delete(protect, deleteReview);
+router
+  .route("/:id")
+  .delete(
+    hasPermission([
+      PERMISSIONS.DELETE_OWN_REVIEW,
+      PERMISSIONS.DELETE_ANY_REVIEW,
+    ]),
+    hasOwnReviewPerm,
+    deleteReview
+  );
 
 module.exports = router;

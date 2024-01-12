@@ -6,17 +6,11 @@ export class Company {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    unique: true,
-  })
+  @Column({ unique: true })
   name: String;
 
-  @Column()
-  avgSalary: number;
-
-  @Column()
-  numReviews: number;
-
-  @OneToMany(() => Review, (r) => r.company)
-  reviews: Array<Review>;
+  @OneToMany((_type) => Review, (review) => review.company, {
+    cascade: ["insert", "update", "remove"],
+  })
+  reviews: Review[];
 }

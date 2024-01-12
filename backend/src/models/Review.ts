@@ -1,17 +1,31 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Company } from "./Company";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { User } from "./User";
+import { Company } from "./Company";
 
 @Entity("reviews")
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (u) => u.id)
-  userID: number;
+  @ManyToOne((_type) => User, (user) => user.reviews, {
+    cascade: ["insert", "update"],
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "userId" })
+  user: User;
 
-  @ManyToOne(() => Company, (c) => c.name)
-  company: String;
+  @ManyToOne((_type) => Company, (company) => company.reviews, {
+    cascade: ["insert", "update"],
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "companyId" })
+  company: Company;
 
   @Column()
   positionTitle: String;
@@ -19,30 +33,21 @@ export class Review {
   @Column()
   location: String;
 
-  @Column()
+  @Column({ type: "float", nullable: true })
   salary: number;
 
-  @Column()
+  @Column({ nullable: true })
   currency: String;
 
-  @Column()
-  positionStartDate: Date;
+  @Column({ type: "date", nullable: true })
+  positionStartDate: string;
 
-  @Column()
-  positionEndDate: Date;
+  @Column({ type: "date", nullable: true })
+  positionEndDate: string;
 
-  @Column()
-  workType: String;
-
-  @Column()
+  @Column({ nullable: true })
   workOption: String;
 
-  @Column()
-  benefits: String;
-
-  @Column()
-  interviewProcess: String;
-
-  @Column()
+  @Column({ nullable: true })
   comments: String;
 }
