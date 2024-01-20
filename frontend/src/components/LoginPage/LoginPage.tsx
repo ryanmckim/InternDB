@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-export default function Login() {
+export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
