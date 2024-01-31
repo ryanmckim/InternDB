@@ -14,12 +14,15 @@ import {
   Select,
   Textarea,
   Heading,
-  useDisclosure,
 } from "@chakra-ui/react";
 import "./reviewModal.scss";
 
-export default function ReviewModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+interface ReviewModalProp {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function ReviewModal(props: ReviewModalProp) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [roleTitle, setRoleTitle] = useState("");
   const [location, setLocation] = useState("");
@@ -45,7 +48,7 @@ export default function ReviewModal() {
     try {
       // Simulate data submission
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      onClose();
+      props.onClose();
     } catch (error) {
       alert("Error submitting data");
     } finally {
@@ -55,11 +58,7 @@ export default function ReviewModal() {
 
   return (
     <>
-      <button onClick={onOpen} className="add-review-button">
-        +
-      </button>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create a Review for SAP</ModalHeader>
