@@ -51,7 +51,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     const token = user.getVerificationToken();
 
-    const verifyUrl = `${process.env.BASE_URL}/api/v1/auth/verify/${token}`;
+    const verifyUrl = `${process.env.FE_URL}/verify/${token}`;
     const message = `
       <p>Please verify your email by clicking the below link:</p>
       <a href=${verifyUrl} clicktracking=off>${verifyUrl}</a>
