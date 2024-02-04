@@ -26,10 +26,7 @@ export default function HomePage() {
 
   useEffect(() => {
     getRequest("/company")
-      .then((data) => {
-        setCompanyData(data);
-        console.log(companyData);
-      })
+      .then((data) => setCompanyData(data))
       .catch((err) => console.log(err));
   }, []);
 
