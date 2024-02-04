@@ -1,33 +1,52 @@
-import React from 'react';
-import { Card, CardHeader, CardBody, Heading, Center, Stack, StackDivider, Box, HStack } from '@chakra-ui/react';
+import React from "react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Heading,
+  Center,
+  Stack,
+  StackDivider,
+  Box,
+  HStack,
+} from "@chakra-ui/react";
 
 interface CompanyProps {
-  company: any
+  company: any;
 }
 
-export default function Company({ company }: CompanyProps) {  
+export default function Company({ company }: CompanyProps) {
   if (!company) {
     return null;
   }
 
-  return(
+  return (
     <React.Fragment>
       <Center>
         <Box>
-        <Card
-          boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
-          bg="white"
-          borderRadius="5px"
-          width="100%"
-          maxWidth="100%"
-          margin="2rem">
+          <Card
+            boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
+            bg="white"
+            borderRadius="5px"
+            width="100%"
+            maxWidth="100%"
+            margin="2rem"
+          >
             <CardHeader>
-              <Heading size='lg' textAlign="center">{company.name}</Heading>
+              <Heading size="lg" textAlign="center">
+                {company.name}
+              </Heading>
             </CardHeader>
             <CardBody>
-              <Stack divider={<StackDivider />} spacing='2'>
+              <Stack divider={<StackDivider />} spacing="2">
                 <Box>
-                  <Heading size='md' textTransform='uppercase' textAlign="center">{company.numReviews} Reviews</Heading>
+                  <Heading
+                    size="md"
+                    textTransform="uppercase"
+                    textAlign="center"
+                  >
+                    {company.numOfReviews} Reviews
+                  </Heading>
                 </Box>
               </Stack>
             </CardBody>
@@ -35,5 +54,5 @@ export default function Company({ company }: CompanyProps) {
         </Box>
       </Center>
     </React.Fragment>
-  )
+  );
 }
