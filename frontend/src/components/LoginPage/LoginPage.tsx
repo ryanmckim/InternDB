@@ -10,9 +10,35 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { postRequest } from "../../utils/apiClient";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    try {
+      const response = await postRequest(
+        "/auth/login",
+        { email, password },
+        headers
+      );
+      navigate("/");
+      console.log(response);
+    } catch (err) {
+      console.error("Login failed", err);
+      alert(err);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -25,14 +51,23 @@ export default function LoginPage() {
         <VStack>
           <Heading>Log in</Heading>
           <Box padding="10" shadow="0px 10px 13px -7px #000000" width="529px">
-            <form>
+            <form onSubmit={handleLogin}>
               <FormControl>
                 <VStack spacing={4}>
-                  <Input type="email" placeholder="UBC email" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="UBC email"
+                    value={email}
+                    onChange={(e) => setEmail(e.currentTarget.value)}
+                  />
                   <InputGroup>
                     <Input
+                      id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.currentTarget.value)}
                     />
                     <InputRightElement width="4.5rem">
                       <Button
@@ -44,7 +79,7 @@ export default function LoginPage() {
                       </Button>
                     </InputRightElement>
                   </InputGroup>
-                  <Button width="full" colorScheme="telegram">
+                  <Button type="submit" width="full" colorScheme="telegram">
                     Log in
                   </Button>
                 </VStack>
