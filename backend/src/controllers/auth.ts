@@ -101,10 +101,7 @@ export const verifyUser = async (req: Request, res: Response) => {
     user.verified = true;
     await userRepository.save(user);
 
-    res.status(201).send({
-      message: "Email verified",
-      response: user,
-    });
+    sendToken(user, 200, res);
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Verification failed" });

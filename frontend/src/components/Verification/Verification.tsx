@@ -8,7 +8,8 @@ export default function Verification() {
 
   const handleClick = async () => {
     try {
-      await getRequest(`/auth/verify/${token}`);
+      const response = await getRequest(`/auth/verify/${token}`);
+      localStorage.setItem("authToken", response.token);
       navigate("/");
     } catch (err) {
       console.error("Verification failed: ", err);

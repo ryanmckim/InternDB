@@ -128,29 +128,3 @@ export const hasOwnReviewPerm = async (
     return;
   }
 };
-
-export const hasOwnUserPerm = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { id } = req.params;
-
-  const ANY_PERMS = [PERMISSIONS.DELETE_ANY_USER, PERMISSIONS.VIEW_ANY_PROFILE];
-
-  if (req.body.permissions) {
-    for (let perm of ANY_PERMS) {
-      if (req.body.permissions.includes(perm)) {
-        next();
-        return;
-      }
-    }
-  }
-
-  if (req.body.user.id !== parseInt(id)) {
-    res.status(403).send({ message: "You do not have the permission" });
-    return;
-  }
-
-  next();
-};

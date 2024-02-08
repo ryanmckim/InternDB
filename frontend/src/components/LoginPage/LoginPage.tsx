@@ -32,8 +32,8 @@ export default function LoginPage() {
         { email, password },
         headers
       );
+      localStorage.setItem("authToken", response.token);
       navigate("/");
-      console.log(response);
     } catch (err) {
       console.error("Login failed", err);
       alert(err);
