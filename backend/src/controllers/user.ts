@@ -17,10 +17,10 @@ const userErrors = require("../errors/userErrors");
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    if (!req.params.id) {
+    if (!req.body.user.id) {
       return res.status(400).send({ error: "Missing id" });
     }
-    await userRepository.delete(req.params.id);
+    await userRepository.delete(req.body.user.id);
     res.send("User deleted successfully");
   } catch (error) {
     console.error(error);
@@ -30,7 +30,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const displayUser = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id;
+    const id = req.body.user.id;
     const user = await userRepository
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.reviews", "review")
@@ -47,7 +47,8 @@ export const displayUser = async (req: Request, res: Response) => {
           }
       }
     }
-    res.json(user);
+    const { password, ...userResponse } = user!;
+    res.json(userResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to display user details" });
@@ -58,7 +59,7 @@ export const newPassword = async (req: Request, res: Response) => {
   try {
     const newPassword = req.body.newPassword;
     const user = await userRepository.findOneBy({
-      id: parseInt(req.params.id),
+      id: parseInt(req.body.user.id),
     });
 
     for (const error in userErrors) {

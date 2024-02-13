@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -25,6 +25,7 @@ interface ReviewProps {
 export default function Review(props: ReviewProps) {
   const editModal = useDisclosure();
   const deleteModal = useDisclosure();
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   if (props.loading) {
     return <h2>Loading...</h2>;
@@ -121,7 +122,13 @@ export default function Review(props: ReviewProps) {
         </Box>
       </Center>
       <ReviewModal isOpen={editModal.isOpen} onClose={editModal.onClose} />
-      <DeleteModal isOpen={deleteModal.isOpen} onClose={deleteModal.onClose} />
+      <DeleteModal
+        isOpen={deleteModal.isOpen}
+        onClose={deleteModal.onClose}
+        header="Delete Review Confirmation"
+        body="Are you sure you want to delete this review?"
+        deleteData={() => {}}
+      />
     </React.Fragment>
   );
 }

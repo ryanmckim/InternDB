@@ -1,6 +1,6 @@
 import { PERMISSIONS } from "../constants/permissions";
 import { displayUser, newPassword, deleteUser } from "../controllers/user";
-import { hasOwnUserPerm, protect, hasPermission } from "../middleware/auth";
+import { protect, hasPermission } from "../middleware/auth";
 import { Router } from "express";
 
 const router = Router();
@@ -9,28 +9,20 @@ router.use(protect);
 
 // GET request for profile page
 router
-  .route("/:id")
+  .route("/")
   .get(
     hasPermission([PERMISSIONS.VIEW_OWN_PROFILE, PERMISSIONS.VIEW_ANY_PROFILE]),
-    hasOwnUserPerm,
     displayUser
   );
 
 // PUT request for changing password
-router
-  .route("/:id")
-  .put(
-    hasPermission([PERMISSIONS.UPDATE_OWN_PWD]),
-    hasOwnUserPerm,
-    newPassword
-  );
+router.route("/").put(hasPermission([PERMISSIONS.UPDATE_OWN_PWD]), newPassword);
 
 // DELETE request for account deletion
 router
-  .route("/:id")
+  .route("/")
   .delete(
     hasPermission([PERMISSIONS.DELETE_OWN_USER, PERMISSIONS.DELETE_ANY_USER]),
-    hasOwnUserPerm,
     deleteUser
   );
 

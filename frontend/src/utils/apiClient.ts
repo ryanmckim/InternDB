@@ -11,11 +11,7 @@ const getAxiosConfigWithHeaders = (headers?: AxiosRequestHeaders) => {
   return headers ? { headers } : {};
 };
 
-export const getRequest = async (
-  path: string,
-  params = {},
-  headers?: AxiosRequestHeaders
-) => {
+export const getRequest = async (path: string, params = {}, headers?: any) => {
   try {
     const response = await axiosInstance.get(path, {
       params,
@@ -28,11 +24,7 @@ export const getRequest = async (
   }
 };
 
-export const postRequest = async (
-  path: string,
-  data: any,
-  headers?: AxiosRequestHeaders
-) => {
+export const postRequest = async (path: string, data: any, headers?: any) => {
   try {
     const response = await axiosInstance.post(
       path,
@@ -46,11 +38,7 @@ export const postRequest = async (
   }
 };
 
-export const putRequest = async (
-  path: string,
-  data: any,
-  headers?: AxiosRequestHeaders
-) => {
+export const putRequest = async (path: string, data: any, headers?: any) => {
   try {
     const response = await axiosInstance.put(
       path,
@@ -64,10 +52,7 @@ export const putRequest = async (
   }
 };
 
-export const deleteRequest = async (
-  path: string,
-  headers?: AxiosRequestHeaders
-) => {
+export const deleteRequest = async (path: string, headers?: any) => {
   try {
     const response = await axiosInstance.delete(
       path,
